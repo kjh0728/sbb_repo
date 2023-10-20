@@ -1,32 +1,31 @@
 package com.mysite.sbb.Model.Entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.web.PageableDefault;
 
-import java.math.BigInteger;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
+import java.util.Optional;
 
 @Entity
 @Getter
 @Setter
-public class Answer {
+public class Comment {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition="TEXT")
+    @Column(columnDefinition = "TEXT")
     private String content;
 
     @CreatedDate
     private LocalDateTime createDate;
 
-    private LocalDateTime modifyDate;
+    @ManyToOne(fetch = FetchType.LAZY)
+    private Answer answer;
 
     @ManyToOne
     private Question question;
@@ -34,10 +33,5 @@ public class Answer {
     @ManyToOne
     private Member member;
 
-    @ManyToMany
-    Set<Member> likeMembers;
 
-    @OneToMany(mappedBy = "answer", cascade = CascadeType.REMOVE)
-    @OrderBy("createDate desc")
-    private List<Comment> commentList;
 }
