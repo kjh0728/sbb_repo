@@ -1,6 +1,7 @@
 package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Exception.DataNotFoundException;
+import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
@@ -35,6 +36,7 @@ public class CommentService {
 
     public Comment create(Question question, Answer answer, String content, Member member)
     {
+        AnswerCommentDTO answerCommentDTO = new AnswerCommentDTO();
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setQuestion(question);

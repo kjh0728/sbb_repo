@@ -3,6 +3,7 @@ package com.mysite.sbb.Controller.Controller;
 import com.mysite.sbb.Controller.Form.AnswerForm;
 import com.mysite.sbb.Controller.Form.CommentForm;
 import com.mysite.sbb.Controller.Form.QuestionForm;
+import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
@@ -46,19 +47,18 @@ public class QuestionController {
     }
 
     @GetMapping(value = "/detail/{id}")
-    public String detail(Model model, @PathVariable("id") Long id, @RequestParam(value = "page", defaultValue = "0") int page,
+    public String detail(Model model, @PathVariable("id") Long id,
+                         @RequestParam(value = "page", defaultValue = "0") int page,
                          @RequestParam(value = "qco", defaultValue = "false") boolean qco,
                          @RequestParam(value = "qco_page", defaultValue = "0") int qco_page,
-                         @RequestParam(value = "aco", defaultValue = "false") boolean aco,
-                         @RequestParam(value = "answer_id", defaultValue = "-1") int answer_id,
                          AnswerForm answerForm)
     {
         Question question = this.questionService.getQuestion(id);
 
         model.addAttribute("question", question);
 
+
         model.addAttribute("qco", qco);
-        model.addAttribute("aco", aco);
 
         Page<Answer> paging = this.answerService.getPage(question, page);
         model.addAttribute("paging", paging);
@@ -66,7 +66,8 @@ public class QuestionController {
         Page<Comment> pageQuestComment = this.commentService.getPage(question, qco_page);
         model.addAttribute("qco_page", pageQuestComment);
 
-        model.addAttribute("answer_id", answer_id);
+        List<AnswerCommentDTO> answerCommentDTOList = answerService.getAnswerCommnetDTO(question.getAnswerList());
+        model.addAttribute("answerCommentDTOList", answerCommentDTOList);
         return "question_detail";
     }
 

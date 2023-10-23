@@ -1,11 +1,13 @@
 package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Exception.DataNotFoundException;
+import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
 import com.mysite.sbb.Model.Entity.Question;
 import com.mysite.sbb.Model.Repository.AnswerRepository;
+import com.mysite.sbb.Model.Repository.CommentRepository;
 import jakarta.persistence.OrderBy;
 import lombok.Builder;
 import org.springframework.data.domain.*;
@@ -21,6 +23,7 @@ import java.util.Optional;
 public class AnswerService {
     private final AnswerRepository answerRepository;
 
+    private final CommentService commentService;
     public Answer create(Question question, String content, Member member)
     {
         Answer answer = new Answer();
@@ -39,6 +42,20 @@ public class AnswerService {
         } else {
             throw new DataNotFoundException("answer not found");
         }
+    }
+
+    public List<AnswerCommentDTO> getAnswerCommnetDTO(List<Answer> answerList)
+    {
+        List<AnswerCommentDTO> answerCommentDTOList = new ArrayList<>();
+        for(Answer answer : answerList)
+        {
+            AnswerCommentDTO answerCommentDTO = new AnswerCommentDTO();
+            answerCommentDTO.setComment(commentService.getPage(answer, answerCommentDTO.getPageNum()));
+            answerCommentDTO.setParent(answer);
+
+             answerCommentDTOList.add(answerCommentDTO);
+        }
+        return answerCommentDTOList;
     }
 
     public void modify(Answer answer, String content) {

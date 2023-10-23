@@ -1,6 +1,7 @@
 package com.mysite.sbb.Controller.Controller;
 
 import com.mysite.sbb.Controller.Form.CommentForm;
+import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
@@ -12,6 +13,7 @@ import com.mysite.sbb.Service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

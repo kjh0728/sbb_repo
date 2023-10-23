@@ -14,4 +14,6 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByAnswerOrderByCreateDateDesc(Pageable pageable, Answer answer);
 
     Page<Comment> findByQuestionOrderByCreateDateDesc(Pageable pageable, Question question);
+
+    Comment findByAnswerId(Long id);
 }

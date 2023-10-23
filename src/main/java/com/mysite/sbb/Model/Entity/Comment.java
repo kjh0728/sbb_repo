@@ -1,8 +1,7 @@
 package com.mysite.sbb.Model.Entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
@@ -12,6 +11,9 @@ import java.util.Optional;
 @Entity
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
 public class Comment {
 
     @Id
@@ -32,6 +34,4 @@ public class Comment {
 
     @ManyToOne
     private Member member;
-
-
 }
