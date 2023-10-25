@@ -211,9 +211,7 @@
                         <!-- 답변 대댓글 반복 시작-->
                         <form th:action="@{|/board/detail/${question.id}|}" method="post">
                             <div>
-                                <div class="card my-3" th:each="acoDTO, loop : ${answerCommentDTOList}">
-                                    <div th:each="aco_paged, loop : ${acoDTO.comment}">
-                                        <a th:id="|aco_${aco_paged.id}|"></a>
+                                <div class="card my-3" th:each="aco_paged, loop : ${answerCommentDTOList.get(loop.index).comment}">
 
                                         <div class="d-flex justify-content-end">
                                             <div class="m-1">
