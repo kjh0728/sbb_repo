@@ -1,7 +1,10 @@
 package com.mysite.sbb.Model.Entity;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
+import org.hibernate.annotations.Where;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.math.BigInteger;
@@ -42,5 +45,6 @@ public class Question {
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
     @OrderBy("createDate desc")
+    @Where(clause = "answer_id is null")
     private List<Comment> commentList;
 }

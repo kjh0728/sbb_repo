@@ -2,6 +2,7 @@ package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Exception.DataNotFoundException;
 import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
+import com.mysite.sbb.Model.DTO.AnswerCommentListDTO;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
@@ -44,18 +45,38 @@ public class AnswerService {
         }
     }
 
-    public List<AnswerCommentDTO> getAnswerCommnetDTO(List<Answer> answerList)
+    public List<AnswerCommentDTO> getAnswerCommentDTO(Page<Answer> answerPage)
     {
         List<AnswerCommentDTO> answerCommentDTOList = new ArrayList<>();
-        for(Answer answer : answerList)
+        for(Answer answer : answerPage.getContent())
         {
             AnswerCommentDTO answerCommentDTO = new AnswerCommentDTO();
             answerCommentDTO.setComment(commentService.getPage(answer, answerCommentDTO.getPageNum()));
             answerCommentDTO.setParent(answer);
 
-             answerCommentDTOList.add(answerCommentDTO);
+            answerCommentDTOList.add(answerCommentDTO);
         }
         return answerCommentDTOList;
+    }
+
+    public List<AnswerCommentDTO> getAnswerCommentDTO(Page<Answer> answerPage, AnswerCommentListDTO answerCommentListDTO)
+    {
+        for(int i = 0; i < answerPage.getSize(); i++)
+        {
+            if(answerCommentListDTO.getAnswerCommentDTOList().size()-1 >= i)
+            {
+                answerCommentListDTO.getAnswerCommentDTOList().get(i).setComment(commentService.getPage(answerPage.getContent().get(i),  answerCommentListDTO.getAnswerCommentDTOList().get(i).getPageNum()));
+                answerCommentListDTO.getAnswerCommentDTOList().get(i).setParent(answerPage.getContent().get(i));
+            }
+            else {
+                AnswerCommentDTO answerCommentDTO = new AnswerCommentDTO();
+                answerCommentDTO.setComment(commentService.getPage(answerPage.getContent().get(i), answerCommentDTO.getPageNum()));
+                answerCommentDTO.setParent(answerPage.getContent().get(i));
+
+                answerCommentListDTO.getAnswerCommentDTOList().add(answerCommentDTO);
+            }
+        }
+        return answerCommentListDTO.getAnswerCommentDTOList();
     }
 
     public void modify(Answer answer, String content) {

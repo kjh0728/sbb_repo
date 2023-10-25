@@ -52,7 +52,7 @@
                    th:text="삭제"></a>
 
                 <!-- 질문 대댓글 -->
-                <div id="commentQuestion" th:classappend="${qco} ? 'show'" class="accordion-collapse collapse">
+                <div id="commentQuestion" th:classappend="${qco_open} ? 'show'" class="accordion-collapse collapse">
                     <h5 class="border-bottom my-3 py-2"
                         th:text="|${#lists.size(question.commentList)}개의 답변이 있습니다.|"></h5>
 
@@ -68,7 +68,7 @@
 
                     <!-- 대댓글 반복 시작-->
                     <div>
-                        <div class="card my-3" th:each="qco_paging, loop : ${qco_page}">
+                        <div class="card my-3" th:each="qco_paging, loop : ${pageQuestComment}">
                             <a th:id="|qco_${qco_paging.id}|"></a>
 
                             <div class="d-flex justify-content-end">
@@ -98,23 +98,26 @@
                     </div>
 
                     <!-- 대댓글 페이징 -->
-                    <div th:if="${!qco_page.isEmpty()}">
+                    <div th:if="${!pageQuestComment.isEmpty()}">
                         <ul class="pagination justify-content-center">
-                            <li class="page-item" th:classappend="${!qco_page.hasPrevious} ? 'disabled'">
+                            <li class="page-item" th:classappend="${!pageQuestComment.hasPrevious} ? 'disabled'">
                                 <a class="page-link"
-                                   th:href="@{|?qco=true&&qco_page=${qco_page.number-1}|}">
+                                   th:href="@{|?qco_open=true&&qco_page_num=${pageQuestComment.number-1}|}">
                                     <span>이전</span>
                                 </a>
                             </li>
-                            <li th:each="page: ${#numbers.sequence(0, qco_page.totalPages-1)}"
-                                th:if="${page >= qco_page.number-5 and page <= qco_page.number+5}"
-                                th:classappend="${page == qco_page.number} ? 'active'"
+
+                            <li th:each="page: ${#numbers.sequence(0, pageQuestComment.totalPages-1)}"
+                                th:if="${page >= pageQuestComment.number-5 and page <= pageQuestComment.number+5}"
+                                th:classappend="${page == pageQuestComment.number} ? 'active'"
                                 class="page-item">
                                 <a th:text="${page + 1}" class="page-link"
-                                   th:href="@{|?qco=true&&qco_page=${page}|}"></a>
+                                   th:href="@{|?qco_open=true&&qco_page_num=${page}|}"></a>
                             </li>
-                            <li class="page-item" th:classappend="${!qco_page.hasNext} ? 'disabled'">
-                                <a class="page-link" th:href="@{|?qco=true&&qco_page=${qco_page.number+1}|}">
+
+                            <li class="page-item" th:classappend="${!pageQuestComment.hasNext} ? 'disabled'">
+                                <a class="page-link"
+                                   th:href="@{|?qco_open=true&&qco_page_num=${pageQuestComment.number+1}|}">
                                     <span>다음</span>
                                 </a>
                             </li>
@@ -134,67 +137,71 @@
     <h5 class="border-bottom mt-5 py-2" th:text="|${#lists.size(answerCommentDTOList)}개의 답변이 있습니다.|"></h5>
     <!-- 답변 반복 시작-->
     <div>
-        <div class="card my-3 " th:each="answerDTO, loop : ${answerCommentDTOList}">
-            <a th:id="|answer_${answerDTO.parent.id}|"></a>
+        <div class="card my-3 " th:each="pagedAnswer, loop : ${pageAnswer}">
+
+            <a th:id="|answer_${pagedAnswer.id}|"></a>
             <div class="card-body">
-                <div class="card-text" th:utext="${@commonUtil.markdown(answerDTO.parent.content)}"></div>
+                <div class="card-text" th:utext="${@commonUtil.markdown(pagedAnswer.content)}"></div>
                 <div class="d-flex justify-content-end border-bottom">
-                    <div th:if="${answerDTO.parent.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
+                    <div th:if="${pagedAnswer.modifyDate != null}"
+                         class="badge bg-light text-dark p-2 text-start mx-3">
                         <div class="mb-2">수정시일</div>
-                        <div th:text="${#temporals.format(answerDTO.parent.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                        <div th:text="${#temporals.format(pagedAnswer.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
                     </div>
 
                     <div class="badge bg-light text-dark p-2 text-start">
                         <div class="mb-2">
-                            <span th:if="${answerDTO.parent.member != null}"
-                                  th:text="${answerDTO.parent.member.username}"></span>
+                            <span th:if="${pagedAnswer.member != null}"
+                                  th:text="${pagedAnswer.member.username}"></span>
                         </div>
-                        <div th:text="${#temporals.format(answerDTO.parent.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                        <div th:text="${#temporals.format(pagedAnswer.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
                     </div>
                 </div>
                 <div class="mt-3">
                     <!-- 질문 답변 추천 -->
                     <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
-                       th:data-uri="@{|/answer/like/${answerDTO.parent.id}|}">
+                       th:data-uri="@{|/answer/like/${pagedAnswer.id}|}">
                         추천
                         <span class="badge rounded-pill bg-danger bg-opacity-75"
-                              th:text="${#lists.size(answerDTO.parent.likeMembers)}"></span>
+                              th:text="${#lists.size(pagedAnswer.likeMembers)}"></span>
                     </a>
 
                     <!-- 질문 답변 댓글 아코디언 -->
                     <a class="btn btn-sm btn-outline-secondary"
                        data-bs-toggle="collapse"
-                       th:data-bs-target="'#commentAnswer' + ${answerDTO.parent.id}"
-                       th:aria-controls="'commentAnswer' + ${answerDTO.parent.id}" aria-expanded="false">
+                       th:data-bs-target="'#commentAnswer' + ${pagedAnswer.id}"
+                       th:aria-controls="'commentAnswer' + ${pagedAnswer.id}" aria-expanded="false">
                         댓글
                         <span class="badge rounded-pill bg-danger bg-opacity-75"
-                              th:text="${#lists.size(answerDTO.parent.commentList)}"></span>
+                              th:text="${#lists.size(pagedAnswer.commentList)}"></span>
                     </a>
 
                     <!-- 질문 답변 수정 -->
-                    <a th:href="@{|/answer/modify/${answerDTO.parent.id}|}"
+                    <a th:href="@{|/answer/modify/${pagedAnswer.id}|}"
                        class="btn btn-sm btn-outline-secondary"
                        sec:authorize="isAuthenticated()"
-                       th:if="${answerDTO.parent.member != null and #authentication.getPrincipal().getUsername() == answerDTO.parent.member.username}"
+                       th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() == pagedAnswer.username}"
                        th:text="수정"></a>
 
                     <!-- 질문 답변 삭제 -->
-                    <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${answerDTO.parent.id}|}"
+                    <a href="javascript:void(0);" th:data-uri="@{|/answer/delete/${pagedAnswer.id}|}"
                        class="delete btn btn-sm btn-outline-secondary" sec:authorize="isAuthenticated()"
-                       th:if="${answerDTO.parent.member != null and #authentication.getPrincipal().getUsername() == answerDTO.parent.member.username}"
+                       th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() == pagedAnswer.username}"
                        th:text="삭제"></a>
 
                     <!-- 답변 대댓글 -->
-                    <div th:id="'commentAnswer' + ${answerDTO.parent.id}"
+                    <div th:id="'commentAnswer' + ${pagedAnswer.id}"
+                         th:classappend="${answerCommentDTOList.get(loop.index).open} ? 'show'"
                          class="accordion-collapse collapse">
                         <h5 class="border-bottom my-3 py-2"
-                            th:text="|${#lists.size(answerDTO.parent.commentList)}개의 답변이 있습니다.|"></h5>
+                            th:text="|${#lists.size(pagedAnswer.commentList)}개의 답변이 있습니다.|"></h5>
 
-                        <form th:action="@{|/comment/answer/create/${question.id}/${answerDTO.parent.id}|}"
+                        <form th:action="@{|/comment/answer/create/${question.id}/${pagedAnswer.id}|}"
                               th:object="${answerForm}"
                               method="post" class="my-3">
                             <div th:replace="form_errors :: formErrorsFragment"></div>
-                            <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control"
+                            <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}"
+                                      class="form-control"
                                       rows="3"></textarea>
                             <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control"
                                       rows="3"></textarea>
@@ -202,125 +209,134 @@
                         </form>
 
                         <!-- 답변 대댓글 반복 시작-->
-                        <div>
-                            <div class="card my-3" th:each="aco_paging, loop : ${answerDTO.comment}">
-                                <a th:id="|aco_${aco_paging.id}|"></a>
+                        <form th:action="@{|/board/detail/${question.id}|}" method="post">
+                            <div>
+                                <div class="card my-3" th:each="acoDTO, loop : ${answerCommentDTOList}">
+                                    <div th:each="aco_paged, loop : ${acoDTO.comment}">
+                                        <a th:id="|aco_${aco_paged.id}|"></a>
 
-                                <div class="d-flex justify-content-end">
-                                    <div class="m-1">
-                                        <a href="javascript:void(0);"
-                                           th:data-uri="@{|/comment/question/delete/${aco_paging.id}|}"
-                                           class="delete btn btn-sm text-danger" sec:authorize="isAuthenticated()"
-                                           th:if="${aco_paging.member != null and #authentication.getPrincipal().getUsername() == aco_paging.member.username}"
-                                           th:text="X"></a>
-                                    </div>
-                                </div>
-
-
-                                <div class="m-3" th:utext="${@commonUtil.markdown(aco_paging.content)}">
-                                </div>
-                                <div class="m-2 d-flex justify-content-end">
-                                    <div class="badge bg-light text-dark p-2 text-start">
-                                        <div class="mb-2">
-                                            <span th:if="${aco_paging.member != null}"
-                                                  th:text="${aco_paging.member.username}"></span>
+                                        <div class="d-flex justify-content-end">
+                                            <div class="m-1">
+                                                <a href="javascript:void(0);"
+                                                   th:data-uri="@{|/comment/question/delete/${aco_paged.id}|}"
+                                                   class="delete btn btn-sm text-danger"
+                                                   sec:authorize="isAuthenticated()"
+                                                   th:if="${aco_paged.member != null and #authentication.getPrincipal().getUsername() == aco_paged.member.username}"
+                                                   th:text="X"></a>
+                                            </div>
                                         </div>
-                                        <div th:text="${#temporals.format(aco_paging.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+
+
+                                        <div class="m-3" th:utext="${@commonUtil.markdown(aco_paged.content)}">
+                                        </div>
+                                        <div class="m-2 d-flex justify-content-end">
+                                            <div class="badge bg-light text-dark p-2 text-start">
+                                                <div class="mb-2">
+                                            <span th:if="${aco_paged.member != null}"
+                                                  th:text="${aco_paged.member.username}"></span>
+                                                </div>
+                                                <div th:text="${#temporals.format(aco_paged.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                                            </div>
+                                        </div>
+
                                     </div>
                                 </div>
 
+                                <!-- 답변 대댓글 페이징 끝 -->
+
+                                <div th:if="${!answerCommentDTOList.get(loop.index).comment.isEmpty()}">
+                                    <div class="pagination justify-content-center">
+                                        <div th:each="pageACO: ${#numbers.sequence(0, answerCommentDTOList.get(loop.index).comment.totalPages-1)}"
+                                             th:if="${pageACO >= answerCommentDTOList.get(loop.index).comment.number-5 and page <= answerCommentDTOList.get(loop.index).comment.number+5}"
+
+                                             class="page-item">
+
+                                            <input type="hidden"
+                                                   th:name="'answerCommentDTOList['+${loop.index}+'].open'"
+                                                   th:value="${true}">
+                                            <label>
+                                                <button th:classappend="${pageACO == answerCommentDTOList.get(loop.index).pageNum} ? 'active'"
+                                                        class="page-link"
+                                                        type="submit"
+                                                        th:name="'answerCommentDTOList['+${loop.index}+'].pageNum'"
+                                                        th:value="${pageACO}"
+                                                        th:text="${pageACO}+1">
+                                                </button>
+                                            </label>
+
+                                        </div>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
 
-
-                        <!-- 답변 대댓글 페이징 -->
-                        <div th:if="${!answerDTO.comment.isEmpty()}">
-                            <ul class="pagination justify-content-center">
-                                <li class="page-item"
-                                    th:classappend="${!answerDTO.comment.hasPrevious} ? 'disabled'">
-                                    <a class="page-link"
-                                       th:href="@{|?qco=true&&qco_page=${answerDTO.comment.number-1}|}">
-                                        <span>이전</span>
-                                    </a>
-                                </li>
-                                <li th:each="page: ${#numbers.sequence(0, answerDTO.comment.totalPages-1)}"
-                                    th:if="${page >= answerDTO.comment.number-5 and page <= answerDTO.comment.number+5}"
-                                    th:classappend="${page == answerDTO.comment.number} ? 'active'"
-                                    class="page-item">
-                                    <a th:text="${page + 1}" class="page-link"
-                                       th:href="@{|?qco=true&&qco_page=${page}|}"></a>
-                                    </li>
-                                <li class="page-item" th:classappend="${!answerDTO.comment.hasNext} ? 'disabled'">
-                                    <a class="page-link"
-                                       th:href="@{|?qco=true&&qco_page=${answerDTO.comment.number+1}|}">
-                                        <span>다음</span>
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                        <!-- 답변 대댓글 페이징 끝 -->
-
+                        </form>
                     </div>
+
                 </div>
+
             </div>
+
         </div>
-        <!-- 답변 반복 끝 -->
+    </div>
 
-        <div th:if="${!paging.isEmpty()}">
-            <ul class="pagination justify-content-center">
-                <li class="page-item" th:classappend="${!paging.hasPrevious} ? 'disabled'">
-                    <a class="page-link"
-                       th:href="@{|?page=${paging.number-1}|}">
-                        <span>이전</span>
-                    </a>
-                </li>
-                <li th:each="page: ${#numbers.sequence(0, paging.totalPages-1)}"
-                    th:if="${page >= paging.number-5 and page <= paging.number+5}"
-                    th:classappend="${page == paging.number} ? 'active'"
-                    class="page-item">
-                    <a th:text="${page + 1}" class="page-link"
-                       th:href="@{|?page=${page}|}"
-                    ></a>
-                </li>
-                <li class="page-item" th:classappend="${!paging.hasNext} ? 'disabled'">
-                    <a class="page-link" th:href="@{|?page=${paging.number+1}|}">
-                        <span>다음</span>
-                    </a>
-                </li>
-            </ul>
-        </div>
+    <!-- 답변 반복 끝 -->
 
-
-        <!-- 답변 작성 -->
-        <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
-            <div th:replace="form_errors :: formErrorsFragment"></div>
-            <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control"
-                      rows="10"></textarea>
-            <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control"
-                      rows="10"></textarea>
-            <input type="submit" value="답변등록" class="btn btn-primary my-2">
-        </form>
+    <div th:if="${!pageAnswer.isEmpty()}">
+        <ul class="pagination justify-content-center">
+            <li class="page-item" th:classappend="${!pageAnswer.hasPrevious} ? 'disabled'">
+                <a class="page-link"
+                   th:href="@{|?page_num=${pageAnswer.number-1}|}">
+                    <span>이전</span>
+                </a>
+            </li>
+            <li th:each="page: ${#numbers.sequence(0, pageAnswer.totalPages-1)}"
+                th:if="${page >= pageAnswer.number-5 and page <= pageAnswer.number+5}"
+                th:classappend="${page == pageAnswer.number} ? 'active'"
+                class="page-item">
+                <a th:text="${page + 1}" class="page-link"
+                   th:href="@{|?page_num=${page}|}"
+                ></a>
+            </li>
+            <li class="page-item" th:classappend="${!pageAnswer.hasNext} ? 'disabled'">
+                <a class="page-link" th:href="@{|?page_num=${pageAnswer.number+1}|}">
+                    <span>다음</span>
+                </a>
+            </li>
+        </ul>
     </div>
 
 
-    <script layout:fragment="script" type='text/javascript'>
+    <!-- 답변 작성 -->
+    <form th:action="@{|/answer/create/${question.id}|}" th:object="${answerForm}" method="post" class="my-3">
+        <div th:replace="form_errors :: formErrorsFragment"></div>
+        <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control"
+                  rows="10"></textarea>
+        <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control"
+                  rows="10"></textarea>
+        <input type="submit" value="답변등록" class="btn btn-primary my-2">
+    </form>
 
-        const delete_elements = document.getElementsByClassName("delete");
-        Array.from(delete_elements).forEach(function (element) {
-            element.addEventListener('click', function () {
-                if (confirm("정말로 삭제하시겠습니까?")) {
-                    location.href = this.dataset.uri;
-                }
-            });
-        });
+</div>
 
-        const recommend_elements = document.getElementsByClassName("recommend");
-        Array.from(recommend_elements).forEach(function (element) {
-            element.addEventListener('click', function () {
-                if (confirm("정말로 추천하시겠습니까?")) {
-                    location.href = this.dataset.uri;
-                }
-            });
+
+<script layout:fragment="script" type='text/javascript'>
+
+    const delete_elements = document.getElementsByClassName("delete");
+    Array.from(delete_elements).forEach(function (element) {
+        element.addEventListener('click', function () {
+            if (confirm("정말로 삭제하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            }
         });
-    </script>
+    });
+
+    const recommend_elements = document.getElementsByClassName("recommend");
+    Array.from(recommend_elements).forEach(function (element) {
+        element.addEventListener('click', function () {
+            if (confirm("정말로 추천하시겠습니까?")) {
+                location.href = this.dataset.uri;
+            }
+        });
+    });
+</script>
 </html>

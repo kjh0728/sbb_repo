@@ -36,7 +36,6 @@ public class CommentService {
 
     public Comment create(Question question, Answer answer, String content, Member member)
     {
-        AnswerCommentDTO answerCommentDTO = new AnswerCommentDTO();
         Comment comment = new Comment();
         comment.setContent(content);
         comment.setQuestion(question);
@@ -64,7 +63,7 @@ public class CommentService {
     {
         Pageable pageable = PageRequest.of(page, 3);
 
-        return commentRepository.findByQuestionOrderByCreateDateDesc(pageable, question);
+        return commentRepository.findByQuestionAndAnswerOrderByCreateDateDesc(pageable, question, null);
     }
 
 

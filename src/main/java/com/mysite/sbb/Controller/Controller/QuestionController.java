@@ -4,6 +4,7 @@ import com.mysite.sbb.Controller.Form.AnswerForm;
 import com.mysite.sbb.Controller.Form.CommentForm;
 import com.mysite.sbb.Controller.Form.QuestionForm;
 import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
+import com.mysite.sbb.Model.DTO.AnswerCommentListDTO;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
@@ -46,28 +47,38 @@ public class QuestionController {
         return "question_list";
     }
 
-    @GetMapping(value = "/detail/{id}")
+    @RequestMapping(value = "/detail/{id}" , method = {RequestMethod.POST, RequestMethod.GET})
     public String detail(Model model, @PathVariable("id") Long id,
-                         @RequestParam(value = "page", defaultValue = "0") int page,
-                         @RequestParam(value = "qco", defaultValue = "false") boolean qco,
-                         @RequestParam(value = "qco_page", defaultValue = "0") int qco_page,
+                         @RequestParam(value = "page_num", defaultValue = "0") int page_num,
+                         @RequestParam(value = "qco_open", defaultValue = "false") boolean qco_open,
+                         @RequestParam(value = "qco_page_num", defaultValue = "0") int qco_page_num,
+                         @ModelAttribute(value="AnswerCommentListDTO") AnswerCommentListDTO answerCommentListDTO,
                          AnswerForm answerForm)
     {
         Question question = this.questionService.getQuestion(id);
 
         model.addAttribute("question", question);
+        model.addAttribute("qco_open", qco_open);
+
+        Page<Comment> pageQuestComment = this.commentService.getPage(question, qco_page_num);
+        model.addAttribute("pageQuestComment", pageQuestComment);
 
 
-        model.addAttribute("qco", qco);
+        Page<Answer> pageAnswer = this.answerService.getPage(question, page_num);
+        model.addAttribute("pageAnswer", pageAnswer);
 
-        Page<Answer> paging = this.answerService.getPage(question, page);
-        model.addAttribute("paging", paging);
+        if(answerCommentListDTO.getAnswerCommentDTOList() == null)
+        {
+            List<AnswerCommentDTO> answerCommentDTOList = answerService.getAnswerCommentDTO(pageAnswer);
+            model.addAttribute("answerCommentDTOList", answerCommentDTOList);
+        }
+        else {
+            List<AnswerCommentDTO> answerCommentDTOList = answerService.getAnswerCommentDTO(pageAnswer, answerCommentListDTO);
+            model.addAttribute("answerCommentDTOList", answerCommentDTOList);
+        }
 
-        Page<Comment> pageQuestComment = this.commentService.getPage(question, qco_page);
-        model.addAttribute("qco_page", pageQuestComment);
 
-        List<AnswerCommentDTO> answerCommentDTOList = answerService.getAnswerCommnetDTO(question.getAnswerList());
-        model.addAttribute("answerCommentDTOList", answerCommentDTOList);
+
         return "question_detail";
     }
 
@@ -135,5 +146,12 @@ public class QuestionController {
         Member member = this.memberService.getMember(principal.getName());
         this.questionService.addLike(question, member);
         return String.format("redirect:/board/detail/%s", id);
+    }
+
+    @RequestMapping(value = "/page" , method = {RequestMethod.POST, RequestMethod.GET})
+    public String page(Model model, @ModelAttribute(value="AnswerCommentListDTO") AnswerCommentListDTO answerCommentListDTO) {
+        System.out.println("리스트 테스트!!! 받았다!!!");
+        System.out.println(answerCommentListDTO);
+        return "redirect:/detail/";
     }
 }
