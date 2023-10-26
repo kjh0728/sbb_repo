@@ -15,6 +15,9 @@ import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -77,22 +80,24 @@ public class CommentController {
     }
 
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/question/delete/{id}")
-    public String QuestionDelete(Principal principal, @PathVariable("id") Long id) {
+    public String QuestionDelete(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
         Comment comment = this.commentService.getComment(id);
-        if (!comment.getMember().getUsername().equals(principal.getName())) {
+        if (!comment.getMember().getUsername().equals(user.getUsername())
+                && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.commentService.delete(comment);
         return String.format("redirect:/board/detail/%s?qco=true", comment.getQuestion().getId());
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/answer/delete/{id}")
-    public String answerDelete(Principal principal, @PathVariable("id") Long id) {
+    public String answerDelete(@AuthenticationPrincipal User user,@PathVariable("id") Long id) {
         Comment comment = this.commentService.getComment(id);
-        if (!comment.getMember().getUsername().equals(principal.getName())) {
+        if (!comment.getMember().getUsername().equals(user.getUsername())
+                && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.commentService.delete(comment);

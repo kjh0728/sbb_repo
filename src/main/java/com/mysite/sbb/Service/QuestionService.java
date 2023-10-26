@@ -1,10 +1,7 @@
 package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Exception.DataNotFoundException;
-import com.mysite.sbb.Model.Entity.Answer;
-import com.mysite.sbb.Model.Entity.Comment;
-import com.mysite.sbb.Model.Entity.Member;
-import com.mysite.sbb.Model.Entity.Question;
+import com.mysite.sbb.Model.Entity.*;
 import com.mysite.sbb.Model.Repository.QuestionRepository;
 import jakarta.persistence.criteria.*;
 import lombok.Builder;
@@ -36,14 +33,26 @@ public class QuestionService {
         }
     }
 
-    public void create(String subject, String content, Member member)
+    public void create(Category category, String subject, String content, Member member)
     {
         Question question = new Question();
+        question.setCategory(category);
         question.setSubject(subject);
         question.setContent(content);
         question.setCreateDate(LocalDateTime.now());
         question.setMember(member);
         this.questionRepository.save(question);
+    }
+
+    public Page<Question> getPage(Long category, int page, String kw)
+    {
+        List<Sort.Order> sorts = new ArrayList<>();
+        sorts.add(Sort.Order.desc("createDate"));
+
+        Pageable pageable = PageRequest.of(page,10, Sort.by(sorts));
+
+        Specification<Question> specification = search(kw, category);
+        return this.questionRepository.findAll(specification, pageable);
     }
 
     public Page<Question> getPage(int page, String kw)
@@ -53,7 +62,7 @@ public class QuestionService {
 
         Pageable pageable = PageRequest.of(page,10, Sort.by(sorts));
 
-        Specification<Question> specification = search(kw);
+        Specification<Question> specification = search(kw, 0L);
         return this.questionRepository.findAll(specification, pageable);
     }
 
@@ -74,7 +83,7 @@ public class QuestionService {
         this.questionRepository.save(question);
     }
 
-    private Specification<Question> search(String kw) {
+    private Specification<Question> search(String kw, Long category) {
         return new Specification<>() {
             private static final long serialVersionUID = 1L;
             @Override
@@ -82,12 +91,26 @@ public class QuestionService {
                 query.distinct(true);  // 중복을 제거
                 Join<Question, Member> u1 = q.join("member", JoinType.LEFT);
                 Join<Question, Answer> a = q.join("answerList", JoinType.LEFT);
+                Join<Question, Category> c = q.join("category", JoinType.LEFT);
                 Join<Answer, Member> u2 = a.join("member", JoinType.LEFT);
-                return cb.or(cb.like(q.get("subject"), "%" + kw + "%"), // 제목
-                        cb.like(q.get("content"), "%" + kw + "%"),      // 내용
-                        cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자
-                        cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용
-                        cb.like(u2.get("username"), "%" + kw + "%"));   // 답변 작성자
+
+                if(category == 0L)
+                {
+                    return cb.or(cb.like(q.get("subject"), "%" + kw + "%"), // 제목
+                            cb.like(q.get("content"), "%" + kw + "%"),      // 내용
+                            cb.like(u1.get("username"), "%" + kw + "%"),    // 질문 작성자
+                            cb.like(a.get("content"), "%" + kw + "%"),      // 답변 내용
+                            cb.like(u2.get("username"), "%" + kw + "%"));   // 답변 작성자
+                }
+                else {
+                    return cb.or(cb.and(cb.like(q.get("subject"), "%" + kw + "%"), cb.equal(c.get("id"), category)), // 제목
+                            cb.and(cb.like(q.get("content"), "%" + kw + "%"), cb.equal(c.get("id"), category)),      // 내용
+                            cb.and(cb.like(u1.get("username"), "%" + kw + "%"), cb.equal(c.get("id"), category)),    // 질문 작성자
+                            cb.and(cb.like(a.get("content"), "%" + kw + "%"), cb.equal(c.get("id"), category)),      // 답변 내용
+                            cb.and(cb.like(u2.get("username"), "%" + kw + "%"), cb.equal(c.get("id"), category)));   // 답변 작성자
+                }
+
+
             }
         };
     }

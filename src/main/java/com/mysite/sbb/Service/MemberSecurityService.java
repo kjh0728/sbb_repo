@@ -34,8 +34,8 @@ public class MemberSecurityService implements UserDetailsService {
             if ("admin".equals(username)) {
                 authorities.add(new SimpleGrantedAuthority(UserRole.ADMIN.getValue()));
         } else {
-            authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
-        }
+                authorities.add(new SimpleGrantedAuthority(UserRole.USER.getValue()));
+            }
         return new User(siteUser.getUsername(), siteUser.getPassword(), authorities);
     }
 }

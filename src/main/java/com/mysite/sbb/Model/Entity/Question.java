@@ -47,4 +47,7 @@ public class Question {
     @OrderBy("createDate desc")
     @Where(clause = "answer_id is null")
     private List<Comment> commentList;
+
+    @ManyToOne
+    private Category category;
 }

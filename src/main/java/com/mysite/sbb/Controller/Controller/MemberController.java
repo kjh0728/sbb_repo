@@ -60,4 +60,11 @@ public class MemberController {
     {
         return "login_form";
     }
+
+    @GetMapping("/findpw")
+    public String findpw()
+    {
+        return "findpw_form";
+    }
+
 }

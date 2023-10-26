@@ -1,0 +1,15 @@
+<html lang="en" layout:decorate="~{layout}">
+<div layout:fragment="content" class="container">
+    <h5  class="my-3 border-bottom pd-2 fw-bold" th:text="카테고리등록"></h5>
+    <form th:object="${categoryForm}" method="post">
+        <input type="hidden" th:name="${_csrf.parameterName}" th:value="${_csrf.token}" />
+        <form th:action="@{/category/create}" th:object="${categoryForm}" method="post">
+            <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+            <div class="mb-3">
+                <label for="subject" class="form-label fw-bold">카테고리 이름</label>
+                <input type="text" th:field="*{name}" name="subject" id="subject" class="form-control">
+            </div>
+            <input type="submit" class="btn btn-primary my-2" value="등록">
+        </form>
+</div>
+</html>

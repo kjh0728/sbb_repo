@@ -1,6 +1,7 @@
 package com.mysite.sbb.Model.Repository;
 
 import com.mysite.sbb.Model.Entity.Answer;
+import com.mysite.sbb.Model.Entity.Category;
 import com.mysite.sbb.Model.Entity.Question;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +16,5 @@ import java.util.List;
 public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     Page<Question> findAll(Pageable pageable);
-
     Page<Question> findAll(Specification<Question> specification, Pageable pageable);
 }

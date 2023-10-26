@@ -17,6 +17,9 @@
                 <li class="nav-item">
                     <a class="nav-link" th:href="@{/member/signup}">회원가입</a>
                 </li>
+                <li>
+                    <a class="nav-link" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/category/create}">관리자</a>
+                </li>
             </ul>
         </div>
     </div>

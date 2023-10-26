@@ -11,6 +11,9 @@ import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -76,11 +79,12 @@ public class AnswerController {
                 answer.getQuestion().getId(), answer.getId());
     }
 
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/delete/{id}")
-    public String answerDelete(Principal principal, @PathVariable("id") Long id) {
+    public String answerDelete(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
         Answer answer = this.answerService.getAnswer(id);
-        if (!answer.getMember().getUsername().equals(principal.getName())) {
+        if (!answer.getMember().getUsername().equals(user.getUsername())
+                && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
         this.answerService.delete(answer);

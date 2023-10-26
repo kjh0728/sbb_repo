@@ -7,6 +7,12 @@
         <form th:action="@{/board/create}" th:object="${questionForm}" method="post">
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
             <div class="mb-3">
+                <select class="form-select" th:field="*{category}">
+                    <option th:each="category, loop : ${categoryList}" th:value="${category.id}" th:text="${category.name}">
+                    </option>
+                </select>
+            </div>
+            <div class="mb-3">
                 <label for="subject" class="form-label fw-bold">제목</label>
                 <input type="text" th:field="*{subject}" name="subject" id="subject" class="form-control">
             </div>
