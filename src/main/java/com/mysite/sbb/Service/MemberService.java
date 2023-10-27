@@ -1,11 +1,11 @@
 package com.mysite.sbb.Service;
 
+import com.mysite.sbb.Config.CommonUtil;
 import com.mysite.sbb.Exception.DataNotFoundException;
 import com.mysite.sbb.Model.Entity.Member;
 import com.mysite.sbb.Model.Repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.Builder;
-import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -17,6 +17,8 @@ public class MemberService {
     private final MemberRepository memberRepository;
 
     private final PasswordEncoder passwordEncoder;
+    private final CommonUtil commonUtil;
+    private final FindPasswordService findPasswordService;
 
     public Member create(String username, String email, String password)
     {
@@ -26,6 +28,14 @@ public class MemberService {
         member.setPassword(passwordEncoder.encode(password));
         this.memberRepository.save(member);
         return member;
+    }
+
+    public void modify(String username, String password)
+    {
+        Member member = memberRepository.findByUsername(username).orElse(null);
+        assert member != null;
+        member.setPassword(passwordEncoder.encode(password));
+        this.memberRepository.save(member);
     }
 
     public Member getMember(String username)
@@ -40,5 +50,15 @@ public class MemberService {
         {
             throw new DataNotFoundException("member not found");
         }
+    }
+
+    @Transactional
+    public void modifyPassword(String email) throws EmailException {
+        String tempPassword = commonUtil.createTempPassword();
+        Member user = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new DataNotFoundException("해당 이메일의 유저가 없습니다."));
+        user.setPassword(passwordEncoder.encode(tempPassword));
+        memberRepository.save(user);
+        findPasswordService.sendSimpleMessage(email, tempPassword);
     }
 }

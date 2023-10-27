@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.math.BigInteger;
 import java.util.List;
@@ -23,4 +24,7 @@ public class Member{
 
     @Column(unique = true)
     private String email;
+
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    private Image image;
 }
