@@ -11,11 +11,19 @@ public class ImageService {
 
     private final ImageRepository imageRepository;
 
-    public void upload(String url, Member member)
+    public void upload(String currName, String name, String url, Member member)
     {
-        Image image = new Image();
+        Image image = imageRepository.findByMember(member);
+        if(image == null)
+        {
+            image = new Image();
+        }
+
+        image.setCurrName(currName);
+        image.setName(name);
         image.setUrl(url);
         image.setMember(member);
+
         this.imageRepository.save(image);
     };
 

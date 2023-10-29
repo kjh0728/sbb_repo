@@ -27,4 +27,8 @@ public class Member{
 
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private Image image;
+
+    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
+    @OrderBy("createDate desc")
+    private List<Answer> answerList;
 }

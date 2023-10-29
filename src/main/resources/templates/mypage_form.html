@@ -3,16 +3,57 @@
     <div class="container-fluid">
         <div class="row">
             <div>
-                <div>
-                        <img src="/img/img.jpg" class="shadow-lg rounded-circle border border-1" alt="profile" width="15%">
-                </div>
+                <form th:action="@{/image/upload}" method="post" id="img-form" enctype="multipart/form-data">
+                    <div class="my-3  d-flex justify-content-center align-content-center">
+                        <div style="position: relative; width: 12rem; height: 12rem;">
+                            <img th:src="@{|/files/${img.name}|}" class="shadow rounded-circle border border-1 text-center" alt="로딩 중"
+                                 style="position: absolute; top: 0; legt: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto">
+                        </div>
+                    </div>
 
+                    <div class="my-3 mt-5 d-flex justify-item-center align-items-center justify-content-center align-content-center">
+                        <input type="file" class="visually-hidden" id="img-input" name="img-input">
+                        <button type="button" id="img-upload-btn" class="btn btn-primary mx-3 w-25">이미지 업로드</button>
+                    </div>
 
+                    <div class="my-3 d-flex justify-item-center align-items-center justify-content-center align-content-center">
+                        <a href="/member/pw_modify" class="btn btn-primary mx-3 w-25">비밀번호 변경하기</a>
+                    </div>
 
-                <a href="/member/pw_modify" class="btn btn-primary m-3">비밀번호 변경하기</a>
+                    <div class="my-3 d-flex justify-item-center align-items-center justify-content-center align-content-center">
+                        <a href="/member/mypage_question" class="btn btn-primary mx-3 w-25">내가 쓴 글</a>
+                    </div>
+
+                    <div class="my-3 d-flex justify-item-center align-items-center justify-content-center align-content-center">
+                        <a href="/member/mypage_answer" class="btn btn-primary mx-3 w-25">내가 쓴 답변</a>
+                    </div>
+                </form>
             </div>
 
         </div>
     </div>
 </div>
+<script layout:fragment="script" type='text/javascript'>
+    const img_btn = document.getElementById("img-upload-btn");
+    img_btn.addEventListener('click', function () {
+        document.getElementById('img-input').click();
+    });
+
+
+    const img_upload = document.getElementById("img-input");
+    img_upload.addEventListener('change', function (){
+        document.getElementById('img-form').submit();
+    });
+
+    img_upload.addEventListener('load', function (){
+        document.getElementById('profile-img').click();
+    });
+
+    const reader = new FileReader();
+    reader.onload = (e) =>
+    {
+        document.getElementById('profile-img').click();
+    }
+
+</script>
 </html>

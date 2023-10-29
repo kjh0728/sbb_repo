@@ -50,4 +50,7 @@ public class Question {
 
     @ManyToOne
     private Category category;
+
+    @Column(columnDefinition = "long default 0", nullable = false)
+    private Long view;
 }

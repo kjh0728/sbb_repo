@@ -2,13 +2,22 @@ package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Config.CommonUtil;
 import com.mysite.sbb.Exception.DataNotFoundException;
+import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Member;
+import com.mysite.sbb.Model.Entity.Question;
 import com.mysite.sbb.Model.Repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.Builder;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 
 @Service

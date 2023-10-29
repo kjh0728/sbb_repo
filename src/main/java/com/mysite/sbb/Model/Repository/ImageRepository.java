@@ -8,5 +8,5 @@ import java.util.Optional;
 
 public interface ImageRepository extends JpaRepository<Image, Long> {
 
-    Image findByMember(Member meber);
+    Image findByMember(Member member);
 }

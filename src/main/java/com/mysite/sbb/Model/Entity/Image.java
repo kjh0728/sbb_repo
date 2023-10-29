@@ -13,6 +13,12 @@ public class Image {
     Long id;
 
     @Column(nullable = false)
+    private String currName;
+
+    @Column(nullable = false)
+    private String name;
+
+    @Column(nullable = false)
     private String url;
 
     @OneToOne(fetch = FetchType.LAZY)

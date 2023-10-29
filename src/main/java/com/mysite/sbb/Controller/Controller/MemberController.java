@@ -4,12 +4,12 @@ import com.mysite.sbb.Controller.Form.MemberCreateForm;
 import com.mysite.sbb.Controller.Form.PWModifyForm;
 import com.mysite.sbb.Controller.Form.TempPasswordForm;
 import com.mysite.sbb.Exception.DataNotFoundException;
-import com.mysite.sbb.Service.EmailException;
-import com.mysite.sbb.Service.FindPasswordService;
-import com.mysite.sbb.Service.MemberService;
+import com.mysite.sbb.Model.Entity.*;
+import com.mysite.sbb.Service.*;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,14 +17,21 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.security.Principal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/member")
 @Builder
 public class MemberController {
     private final MemberService memberService;
+    private final ImageService imageService;
+    private final QuestionService questionService;
+    private final CategoryService categoryService;
+    private final AnswerService answerService;
+
 
     @GetMapping("/signup")
     public String signup(MemberCreateForm memberCreateForm) {
@@ -99,8 +106,12 @@ public class MemberController {
     }
 
     @GetMapping("/mypage")
-    public String mypage()
+    public String mypage(Model model, Principal principal)
     {
+        Member member = memberService.getMember(principal.getName());
+        Image image = imageService.findImage(member);
+
+        model.addAttribute("img", image);
         return "mypage_form";
     }
 
@@ -140,4 +151,31 @@ public class MemberController {
 
         return "mypage_form";
     }
+
+    @GetMapping("/mypage_question")
+    public String mypage_question(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+                                  @RequestParam(value = "kw", defaultValue = "") String kw,
+                                  Principal principal)
+    {
+        Page<Question> paging = this.questionService.getPage(principal.getName(), page, kw);
+        List<Category> categoryList = this.categoryService.getList();
+        model.addAttribute("categoryList", categoryList);
+        model.addAttribute("paging", paging);
+        model.addAttribute("kw",kw);
+        return "question_list";
+    }
+
+    @GetMapping("/mypage_answer")
+    public String mypage_answer(Model model, @RequestParam(value = "page", defaultValue = "0") int page,
+                                  @RequestParam(value = "kw", defaultValue = "") String kw,
+                                  Principal principal)
+    {
+        Page<Answer> paging = this.answerService.getPage(principal.getName(), page, kw);
+        List<Category> categoryList = this.categoryService.getList();
+        model.addAttribute("categoryList", categoryList);
+        model.addAttribute("paging", paging);
+        model.addAttribute("kw",kw);
+        return "answer_list";
+    }
+
 }
