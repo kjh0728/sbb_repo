@@ -320,7 +320,7 @@
         <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}" class="form-control"
                   rows="10"></textarea>
         <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control"
-                  rows="10"></textarea>
+                  rows="10" id="answer-content"></textarea>
         <input type="submit" value="답변등록" class="btn btn-primary my-2">
     </form>
 
@@ -328,6 +328,7 @@
 
 
 <script layout:fragment="script" type='text/javascript'>
+    var simplemde = new SimpleMDE({element:document.getElementById("answer-content")});
 
     const delete_elements = document.getElementsByClassName("delete");
     Array.from(delete_elements).forEach(function (element) {

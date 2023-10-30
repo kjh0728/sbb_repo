@@ -9,6 +9,10 @@ import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.DTO.AnswerCommentListDTO;
 import com.mysite.sbb.Model.Entity.*;
 import com.mysite.sbb.Service.*;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
@@ -68,14 +72,44 @@ public class QuestionController {
     }
 
     @RequestMapping(value = "/detail/{id}" , method = {RequestMethod.POST, RequestMethod.GET})
+    @Transactional
     public String detail(Model model, @PathVariable("id") Long id,
                          @RequestParam(value = "page_num", defaultValue = "0") int page_num,
                          @RequestParam(value = "qco_open", defaultValue = "false") boolean qco_open,
                          @RequestParam(value = "qco_page_num", defaultValue = "0") int qco_page_num,
                          @ModelAttribute(value="AnswerCommentListDTO") AnswerCommentListDTO answerCommentListDTO,
+                         HttpServletRequest request,
+                         HttpServletResponse response,
                          AnswerForm answerForm)
     {
         Question question = this.questionService.getQuestion(id);
+
+        Cookie oldCookie = null;
+        Cookie[] cookies = request.getCookies();
+        if (cookies != null) {
+            for (Cookie cookie : cookies) {
+                if (cookie.getName().equals("postView")) {
+                    oldCookie = cookie;
+                }
+            }
+        }
+
+        if (oldCookie != null) {
+            if (!oldCookie.getValue().contains("["+ id.toString() +"]")) {
+                this.questionService.updateView(id);
+                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+                oldCookie.setPath("/");
+                oldCookie.setMaxAge(60 * 60 * 24); 							// 쿠키 시간
+                response.addCookie(oldCookie);
+            }
+        } else {
+            this.questionService.updateView(id);
+            Cookie newCookie = new Cookie("postView", "[" + id + "]");
+            newCookie.setPath("/");
+            newCookie.setMaxAge(60 * 60 * 24); 								// 쿠키 시간
+            response.addCookie(newCookie);
+        }
+
 
         model.addAttribute("question", question);
         model.addAttribute("qco_open", qco_open);

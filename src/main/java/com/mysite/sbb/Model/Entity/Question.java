@@ -52,5 +52,5 @@ public class Question {
     private Category category;
 
     @Column(columnDefinition = "long default 0", nullable = false)
-    private Long view;
+    private Integer view;
 }

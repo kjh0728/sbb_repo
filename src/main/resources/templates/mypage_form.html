@@ -7,7 +7,12 @@
                     <div class="my-3  d-flex justify-content-center align-content-center">
                         <div style="position: relative; width: 12rem; height: 12rem;">
                             <img th:src="@{|/files/${img.name}|}" class="shadow rounded-circle border border-1 text-center" alt="로딩 중"
-                                 style="position: absolute; top: 0; legt: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto">
+                                 style="position: absolute; top: 0; legt: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto"
+                                 th:if="${img}!=null">
+                            <div class="shadow rounded-circle border border-1 text-center bg-light"
+                                 style="position: absolute; top: 0; legt: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto"
+                                 th:unless="${img}!=null">
+                            </div>
                         </div>
                     </div>
 

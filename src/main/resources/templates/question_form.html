@@ -24,4 +24,9 @@
             <input type="submit" class="btn btn-primary my-2" th:unless="${questionForm.subject} != null" value="등록">
         </form>
     </div>
+
+
+    <script layout:fragment="script" type='text/javascript'>
+        var simplemde = new SimpleMDE({element:document.getElementById("content")});
+    </script>
 </html>

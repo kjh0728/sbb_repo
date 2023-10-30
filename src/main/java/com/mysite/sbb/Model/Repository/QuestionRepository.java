@@ -23,5 +23,5 @@ public interface QuestionRepository extends JpaRepository<Question, Long> {
 
     @Modifying
     @Query("update Question q set q.view = q.view + 1 where q.id = :id")
-    Long updateByView(@Param("id") Long id);
+    Integer updateByView(@Param("id") Long id);
 }

@@ -31,4 +31,7 @@ public class Member{
     @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
     @OrderBy("createDate desc")
     private List<Answer> answerList;
+
+    private String provider;
+    private String providerId;
 }

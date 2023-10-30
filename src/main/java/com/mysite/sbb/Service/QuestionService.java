@@ -41,6 +41,7 @@ public class QuestionService {
         question.setContent(content);
         question.setCreateDate(LocalDateTime.now());
         question.setMember(member);
+        question.setView(0);
         this.questionRepository.save(question);
     }
 
@@ -95,7 +96,7 @@ public class QuestionService {
         this.questionRepository.save(question);
     }
 
-    public Long updateView(Long id)
+    public Integer updateView(Long id)
     {
         return this.questionRepository.updateByView(id);
     }

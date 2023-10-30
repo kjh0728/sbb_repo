@@ -1,5 +1,7 @@
 package com.mysite.sbb.Config;
 
+import com.mysite.sbb.Service.PrincipalOauthUserService;
+import lombok.Builder;
 import org.apache.tomcat.util.net.openssl.ciphers.Authentication;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +18,11 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Configuration
 @EnableWebSecurity
 @EnableMethodSecurity(prePostEnabled = true)
+@Builder
 public class SecurityConfig {
+
+    private PrincipalOauthUserService principalOauthUserService;
+
     @Bean
     SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -25,18 +31,21 @@ public class SecurityConfig {
                 .formLogin((formLogin) -> formLogin
                         .loginPage("/member/login")
                         .defaultSuccessUrl("/"))
+                .oauth2Login((oauth2Login) -> oauth2Login
+                        .loginPage("/member/login")
+                        .defaultSuccessUrl("/")
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig.userService(principalOauthUserService)))
+
                 .logout((logout)->logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                         .logoutSuccessUrl("/")
                         .invalidateHttpSession(true))
+
         ;
         return http.build();
     }
 
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+
 
     @Bean
     AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration) throws Exception {
