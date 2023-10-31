@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -30,7 +31,7 @@ public class MemberController {
     private final CategoryService categoryService;
     private final AnswerService answerService;
 
-    private final BCryptPasswordEncoder passwordEncoder;
+    private final PasswordEncoder passwordEncoder;
 
 
     @GetMapping("/signup")
@@ -106,11 +107,9 @@ public class MemberController {
     }
 
     @GetMapping("/mypage")
-    public String mypage(Model model, Principal principal)
-    {
+    public String mypage(Model model, Principal principal) throws InterruptedException {
         Member member = memberService.getMember(principal.getName());
         Image image = imageService.findImage(member);
-
         model.addAttribute("img", image);
         return "mypage_form";
     }

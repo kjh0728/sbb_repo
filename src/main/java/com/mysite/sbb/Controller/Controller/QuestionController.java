@@ -7,6 +7,7 @@ import com.mysite.sbb.Controller.Form.CommentForm;
 import com.mysite.sbb.Controller.Form.QuestionForm;
 import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.DTO.AnswerCommentListDTO;
+import com.mysite.sbb.Model.DTO.ViewMemberDTO;
 import com.mysite.sbb.Model.Entity.*;
 import com.mysite.sbb.Service.*;
 import jakarta.servlet.http.Cookie;
@@ -30,6 +31,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.net.URLEncoder;
 import java.security.Principal;
 import java.util.Collections;
 import java.util.List;
@@ -80,6 +82,7 @@ public class QuestionController {
                          @ModelAttribute(value="AnswerCommentListDTO") AnswerCommentListDTO answerCommentListDTO,
                          HttpServletRequest request,
                          HttpServletResponse response,
+                         Principal principal,
                          AnswerForm answerForm)
     {
         Question question = this.questionService.getQuestion(id);
@@ -93,18 +96,29 @@ public class QuestionController {
                 }
             }
         }
+        String username = null;
+
+        if(principal != null)
+        {
+            username = principal.getName();
+        }
+
 
         if (oldCookie != null) {
-            if (!oldCookie.getValue().contains("["+ id.toString() +"]")) {
+            if (!oldCookie.getValue().contains("[" + username+ "]["+ id.toString() +"]")) {
                 this.questionService.updateView(id);
-                oldCookie.setValue(oldCookie.getValue() + "_[" + id + "]");
+
+                oldCookie.setValue(oldCookie.getValue() + "_[" + username + "]["  + id + "]");
+
                 oldCookie.setPath("/");
                 oldCookie.setMaxAge(60 * 60 * 24); 							// 쿠키 시간
                 response.addCookie(oldCookie);
             }
         } else {
             this.questionService.updateView(id);
-            Cookie newCookie = new Cookie("postView", "[" + id + "]");
+            Cookie newCookie;
+
+            newCookie= new Cookie("postView", "[" + username + "]["  + id + "]");
             newCookie.setPath("/");
             newCookie.setMaxAge(60 * 60 * 24); 								// 쿠키 시간
             response.addCookie(newCookie);
