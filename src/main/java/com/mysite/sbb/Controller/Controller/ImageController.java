@@ -17,6 +17,8 @@ import java.awt.desktop.ScreenSleepEvent;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.NoSuchAlgorithmException;
 
 @Controller
@@ -42,6 +44,7 @@ public class ImageController {
             String name = new MD5Generator(currName).toString() + "." +  type[type.length - 1];
 
             String savePath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files";
+            String imgPath = System.getProperty("user.dir") + "\\src\\main\\resources\\static\\img";
 
             if (!new File(savePath).exists()) {
                 try{
@@ -53,7 +56,14 @@ public class ImageController {
             }
 
             String filePath = savePath + "\\" + name;
-            multipartFile.transferTo(new File(filePath));
+
+            String strimgPath = imgPath + "\\myimg.png";
+
+            File origFile = new File(filePath);
+            multipartFile.transferTo(origFile);
+
+            File myImg = new File(strimgPath);
+            Files.copy(origFile.toPath(), myImg.toPath(), StandardCopyOption.REPLACE_EXISTING);
 
             imageService.upload(currName, name, filePath, member);
 

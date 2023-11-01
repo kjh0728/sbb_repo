@@ -14,7 +14,7 @@
                     <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/login}">로그인</a>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}">로그아웃</a>
                 </li>
-                <li class="nav-ite">
+                <li class="nav-item">
                     <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/signup}">회원가입</a>
                 </li>
                 <li>
@@ -23,8 +23,15 @@
                 <li>
                     <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/mypage}">마이페이지</a>
                 </li>
+                <li class="nav-item">
+                    <div style="position: relative; width: 2.5rem; height: 2.5rem;" id = "image_container">
+                        <a sec:authorize="isAuthenticated()" class="nav-link" href="/member/mypage">
+                            <img th:src="@{|/myimg/${member}|}" alt="에러" class="shadow-sm rounded-circle text-center"
+                                 style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                        </a>
+                    </div>
+                </li>
             </ul>
         </div>
     </div>
-
 </nav>
