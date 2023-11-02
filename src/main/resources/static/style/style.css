@@ -1,6 +1,40 @@
-body
+.nav-link:hover {
+    color: #0090f9;
+    background: #e0edf9;
+}
+
+.nav-link{
+    color:#7a7a7a;
+}
+
+
+.nav-link.active
 {
-    margin: 0;
-    width: 100%;
-    height: 100%;
+    color: #0090f9;
+    background: #e0edf9;
+}
+
+.navbar-nav
+{
+    color: #0090f9;
+}
+
+.font-english
+{
+    letter-spacing: 4px;
+}
+
+.left-content
+{
+    width: 15%;
+}
+
+.main-content
+{
+    width: 70%;
+}
+
+.fixed {
+    position: fixed;
+    top: 6rem;
 }

@@ -1,0 +1,16 @@
+<div th:fragment="QandALeftContentFragment" class="fixed btn my-5 border border-1 rounded-4">
+    <div class="border-bottom p-2 text-center">
+        <span class="fw-bold">category</span>
+    </div>
+
+    <ul class="nav flex-column mb-auto">
+        <li class="my-2 nav-item">
+            <a class="nav-link rounded" href="/board/list" th:text="전체게시판"
+               th:classappend="${nowCategory == null} ? 'active'"></a>
+        </li>
+        <li class="my-2 nav-item" th:each="category, loop : ${categoryList}">
+            <a class="nav-link rounded" th:href="@{|/board/list/${category.id}|}" th:text="${category.name}"
+               th:classappend="${nowCategory != null && nowCategory.id == category.id} ? 'active'"></a>
+        </li>
+    </ul>
+</div>

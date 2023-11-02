@@ -1,37 +1,67 @@
-<nav th:fragment="navbarFragment" class="navbar navbar-expand-lg navbar-light bg-light border-bottom">
-    <div class="container-fluid d-flex flex-wrap align-items-center justify-content-center justify-content-md-between">
-        <a class="navbar-brand col--1 mb-2 mb-md-0" href="/">RASGULLA</a>
-        <button class="navbar-toggler" type="button"
-                data-bs-toggle="collapse"
-                data-bs-target="#navbarSupportedContent"
-                aria-controls="navba1rSupportedContent" aria-expanded="false"
-                aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li class="nav-item">
-                    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/login}">로그인</a>
-                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/logout}">로그아웃</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" sec:authorize="isAnonymous()" th:href="@{/member/signup}">회원가입</a>
-                </li>
-                <li>
-                    <a class="nav-link" sec:authorize="hasRole('ROLE_ADMIN')" th:href="@{/category/create}">관리자</a>
-                </li>
-                <li>
-                    <a class="nav-link" sec:authorize="isAuthenticated()" th:href="@{/member/mypage}">마이페이지</a>
-                </li>
-                <li class="nav-item">
-                    <div style="position: relative; width: 2.5rem; height: 2.5rem;" id = "image_container">
-                        <a sec:authorize="isAuthenticated()" class="nav-link" href="/member/mypage">
-                            <img th:src="@{|/myimg/${member}|}" alt="에러" class="shadow-sm rounded-circle text-center"
-                                 style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
-                        </a>
-                    </div>
-                </li>
-            </ul>
+<nav th:fragment="navbarFragment" class="d-flex navbar navbar-expand-lg navbar-light bg-light border-bottom sticky-top">
+        <div class="flex-grow-1 d-flex justify-content-between container" >
+
+            <div class="flex-fill p-2">
+                <a class="navbar-brand" href="/">RASGULLA</a>
+            </div>
+
+            <div id="navbarSupportedContent" class="flex-fill collapse navbar-collapse" >
+                <div class="flex-grow-1">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link rounded font-english" th:href="@{/board/list}">Q&A</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link rounded" href="#">추가메뉴</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link rounded" href="#">추가메뉴</a>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="flex-grow-0">
+                    <ul class="nav">
+                        <li class="nav-item">
+                            <a class="nav-link rounded" sec:authorize="isAnonymous()" th:href="@{/member/login}">로그인</a>
+                            <a class="nav-link rounded" sec:authorize="isAuthenticated()" th:href="@{/member/logout}">로그아웃</a>
+                        </li>
+
+                        <li class="nav-item" sec:authorize="isAnonymous()" >
+                            <a class="nav-link rounded" th:href="@{/member/signup}">회원가입</a>
+                        </li>
+
+                        <li sec:authorize="hasRole('ROLE_ADMIN')">
+                            <a class="nav-link rounded" th:href="@{/category/create}">관리자</a>
+                        </li>
+
+                        <li sec:authorize="isAuthenticated()" >
+                            <a class="nav-link rounded" th:href="@{/member/mypage}">마이페이지</a>
+                        </li>
+
+                        <li sec:authorize="isAuthenticated()">
+                            <div style="position: relative; width: 2.5rem; height: 2.5rem;" id = "image_container">
+                                <a class="nav-link" href="/member/mypage">
+                                    <img th:if="${myphoto}!=null" th:src="@{|/resources/${myphoto.name}|}" alt="에러" class="shadow-sm rounded-circle text-center"
+                                         style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                    <img th:unless="${myphoto}!=null" th:src="@{/img/noneuser.png}" alt="에러" class="shadow-sm rounded-circle text-center"
+                                         style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                </a>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <button class="navbar-toggler" type="button"
+                    data-bs-toggle="collapse"
+                    data-bs-target="#navbarSupportedContent"
+                    aria-controls="navba1rSupportedContent" aria-expanded="false"
+                    aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
         </div>
-    </div>
 </nav>

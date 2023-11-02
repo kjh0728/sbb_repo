@@ -15,9 +15,19 @@
 <body>
 
 <nav th:replace="~{navbar::navbarFragment}"></nav>
-<!-- 기본 템플릿 안에 삽입될 내용 Start -->
-<th:block layout:fragment="content"></th:block>
-<!-- 기본 템플릿 안에 삽입될 내용 End -->
+
+<div class="d-flex container">
+    <div class="left-content">
+        <th:blck layout:fragment="left-content"></th:blck>
+    </div>
+
+    <div class="main-content" style="height: 200vh">
+        <!-- 기본 템플릿 안에 삽입될 내용 Start -->
+        <th:block layout:fragment="content"></th:block>
+        <!-- 기본 템플릿 안에 삽입될 내용 End -->
+    </div>
+</div>
+
 
 <script th:src="@{/style/bootstrap.min.js}"></script>
 
