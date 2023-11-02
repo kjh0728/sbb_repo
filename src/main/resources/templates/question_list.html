@@ -55,7 +55,7 @@
                           th:text="${#lists.size(question.answerList)}">
                                     </span>
                 </td>
-                <td><span th:if="${question.member != null}" th:text=" ${question.member.username}"></span></td>
+                <td><span th:if="${question.member != null}" th:text=" ${#strings.substring(question.member.username, 0, 3) + '****'}"></span></td>
                 <td><span th:text="${question.view}"></span></td>
                 <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
