@@ -19,6 +19,44 @@
     color: #0090f9;
 }
 
+.mt-5r
+{
+    margin-top: 5rem;
+}
+
+a{
+    text-decoration-line: none;
+    color: #0090f9;
+}
+.sns-login-btn
+{
+    border-color: #d6d6d6;
+    width: 10rem;
+
+}
+
+.sns-login-btn:hover{
+    border-color: #646467;
+}
+
+.btn-primary{
+    background: #0090f9;
+    border-color: #0090f9;
+}
+
+
+.font-700
+{
+    font-weight: 700;
+    color:#4b4b4f;
+}
+
+.font-400
+{
+    font-weight: 400;
+    color:#4b4b4f;
+}
+
 .font-english
 {
     letter-spacing: 4px;
@@ -37,4 +75,36 @@
 .fixed {
     position: fixed;
     top: 6rem;
+}
+
+.line {
+    display:flex;
+    flex-basis:100%;
+    align-items:center;
+    color:rgba(0,0,0,0.8);
+    font-size:14px;
+    margin:8px 0px;
+}
+.line::before{
+    content:"";
+    flex-grow:1;
+    margin-right: 10px;
+    background:rgba(0,0,0,0.2);
+    height:1px;
+    font-size:0px;
+    line-height: 0px;
+}
+.line::after {
+    content:"";
+    flex-grow:1;
+    margin-left: 10px;
+    background:rgba(0,0,0,0.2);
+    height:1px;
+    font-size:0px;
+    line-height: 0px;
+}
+
+* {
+    font-family: 'Noto Sans KR', sans-serif;
+    letter-spacing: 0.3px;
 }
