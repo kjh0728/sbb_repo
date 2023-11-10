@@ -25,13 +25,20 @@ public class Member{
     @Column(unique = true)
     private String email;
 
+    @Column(length = 50)
+    private String realName;
+
+    @Column(length = 50)
+    private String nickName;
+
     @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
     private Image image;
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.REMOVE)
-    @OrderBy("createDate desc")
-    private List<Answer> answerList;
-
     private String provider;
     private String providerId;
+
+    private String snsImage;
+
+    @Column(columnDefinition = "default 0", nullable = false)
+    private Long score;
 }

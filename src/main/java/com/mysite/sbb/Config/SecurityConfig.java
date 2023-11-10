@@ -21,6 +21,8 @@ import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 @Builder
 public class SecurityConfig {
 
+    private static final String SOCIAL_LOGIN = "social_login";
+
     private PrincipalOauthUserService principalOauthUserService;
 
     @Bean
@@ -34,8 +36,9 @@ public class SecurityConfig {
                 .oauth2Login((oauth2Login) -> oauth2Login
                         .loginPage("/member/login")
                         .defaultSuccessUrl("/")
-                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig.userService(principalOauthUserService)))
-
+                        .failureUrl("/member/signup/social")
+                        .userInfoEndpoint((userInfoEndpointConfig) -> userInfoEndpointConfig.userService(principalOauthUserService))
+                )
                 .logout((logout)->logout
                         .logoutRequestMatcher(new AntPathRequestMatcher("/member/logout"))
                         .logoutSuccessUrl("/")

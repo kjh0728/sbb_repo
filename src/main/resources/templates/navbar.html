@@ -9,7 +9,7 @@
                 <div class="flex-grow-1">
                     <ul class="nav">
                         <li class="nav-item">
-                            <a class="nav-link rounded font-english" th:href="@{/board/list}">Q&A</a>
+                            <a class="nav-link rounded font-english active" th:href="@{/board/list}">Q&A</a>
                         </li>
 
                         <li class="nav-item">
@@ -44,7 +44,7 @@
                         <li sec:authorize="isAuthenticated()">
                             <div style="position: relative; width: 2.5rem; height: 2.5rem;" id = "image_container">
                                 <a class="nav-link" href="/member/mypage">
-                                    <img th:if="${myphoto}!=null" th:src="@{|/resources/${myphoto.name}|}" alt="에러" class="shadow-sm rounded-circle text-center"
+                                    <img th:if="${myphoto}!=null" th:src="${myphoto}" alt="에러" class="shadow-sm rounded-circle text-center"
                                          style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
                                     <img th:unless="${myphoto}!=null" th:src="@{/img/noneuser.png}" alt="에러" class="shadow-sm rounded-circle text-center"
                                          style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">

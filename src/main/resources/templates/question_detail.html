@@ -8,15 +8,40 @@
             <!-- 질문 출력 -->
             <div class="card-text" th:utext="${@commonUtil.markdown(question.content)}"></div>
             <div class="d-flex justify-content-end border-bottom py-2">
-                <div th:if="${question.modifyDate != null}" class="badge bg-light text-dark p-2 text-start mx-3">
-                    <div class="mb-2">수정시일</div>
-                    <div th:text="${#temporals.format(question.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
-                </div>
-                <div class="badge bg-light text-dark p-2 text-start">
-                    <div class="mb-2">
-                        <span th:if="${question.member != null}" th:text="${question.member.username}"></span>
+                <div class="d-flex">
+                    <div class="d-flex align-items-center">
+                        <div style="position: relative; width: 2.5rem; height: 2.5rem;" id="image_container_question">
+                            <a class="nav-link" href="/member/mypage">
+                                <img th:if="${question.member.snsImage}!=null" th:src="${question.member.snsImage}"
+                                     alt="에러"
+                                     class="shadow-sm rounded-circle text-center"
+                                     style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                <img th:if="${question.member.snsImage}==null and ${question.member.image}==null"
+                                     th:src="@{/img/noneuser.png}" alt="에러"
+                                     class="shadow-sm rounded-circle text-center"
+                                     style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                <img th:if="${question.member.snsImage}==null and ${question.member.image}!=null"
+                                     th:src="@{|/resources/${question.member.image.name}|}" alt="에러"
+                                     class="shadow-sm rounded-circle text-center"
+                                     style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                            </a>
+                        </div>
                     </div>
-                    <div th:text="${#temporals.format(question.createDate,'yyyy-MM-dd HH:mm:ss')}"></div>
+
+                    <div>
+                        <div th:if="${question.modifyDate != null}"
+                             class="badge bg-light text-dark p-2 text-start mx-3">
+                            <div class="mb-2">수정시일</div>
+                            <div th:text="${#temporals.format(question.modifyDate, 'yyyy-MM-dd HH:mm')}"></div>
+                        </div>
+                        <div class="badge bg-light text-dark p-2 text-start">
+                            <div class="mb-2">
+                        <span th:if="${question.member != null}"
+                              th:text="${#strings.substring(question.member.username, 0, 3) + '****'}"></span>
+                            </div>
+                            <div th:text="${#temporals.format(question.createDate,'yyyy-MM-dd HH:mm:ss')}"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
             <!-- 질문 추천 -->
@@ -93,7 +118,7 @@
                                 <div class="badge bg-light text-dark p-2 text-start">
                                     <div class="mb-2">
                                         <span th:if="${qco_paging.member != null}"
-                                              th:text="${qco_paging.member.username}"></span>
+                                              th:text="${#strings.substring(qco_paging.member.username, 0, 3) + '****'}"></span>
                                     </div>
                                     <div th:text="${#temporals.format(qco_paging.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
                                 </div>
@@ -147,8 +172,121 @@
 
                 <a th:id="|answer_${pagedAnswer.id}|"></a>
                 <div class="card-body">
+                    <div class="card-header mb-3 d-flex justify-content-end p-0" sec:authorize="isAuthenticated()"
+                         th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() == pagedAnswer.member.username}">
+                        <div class="pb-1" th:if="${question.chooseAnswer.id != pagedAnswer.id}">
+                            <a th:href="@{|/board/choose/${question.id}/${pagedAnswer.id}|}"
+                               class="btn-sm-noneoutline-ras d-flex justify-content-center">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="28"
+                                         height="28"
+                                         fill="none" viewBox="0 0 24 24"
+                                         stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                         class="text-gray-400">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                    </svg>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="pb-1" th:unless="${question.chooseAnswer.id != pagedAnswer.id}">
+                            <a th:href="@{|/board/choose/delete/${question.id}/${pagedAnswer.id}|}"
+                               class="btn-sm-noneoutline-ras d-flex justify-content-center">
+                                <div>
+                                    <svg xmlns="http://www.w3.org/2000/svg"
+                                         width="28"
+                                         height="28"
+                                         fill="none" viewBox="0 0 24 24"
+                                         stroke-width="1.5" stroke="currentColor" aria-hidden="true">
+                                        <path stroke-linecap="round" stroke-linejoin="round"
+                                              d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                    </svg>
+                                </div>
+                            </a>
+                        </div>
+                    </div>
+
+                    <div class="card-header mb-3 d-flex justify-content-end p-0" sec:authorize="isAuthenticated()"
+                         th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() != pagedAnswer.member.username}">
+                        <div class="pb-1" th:if="${question.chooseAnswer.id != pagedAnswer.id}">
+                            <div class="d-flex justify-content-center">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="28"
+                                     height="28"
+                                     fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                     class="text-gray-400">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="pb-1" th:unless="${question.chooseAnswer.id != pagedAnswer.id}">
+                            <div class="d-flex justify-content-center">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="28"
+                                     height="28"
+                                     fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                     class="navbar-nav">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-header mb-3 d-flex justify-content-end p-0" sec:authorize="isAnonymous()">
+                        <div class="pb-1" th:if="${question.chooseAnswer.id != pagedAnswer.id}">
+                            <div class="d-flex justify-content-center">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="28"
+                                     height="28"
+                                     fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                     class="text-gray-400">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                        <div class="pb-1" th:unless="${question.chooseAnswer.id != pagedAnswer.id}">
+                            <div class="d-flex justify-content-center">
+                                <svg xmlns="http://www.w3.org/2000/svg"
+                                     width="28"
+                                     height="28"
+                                     fill="none" viewBox="0 0 24 24"
+                                     stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                     class="navbar-nav">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                          d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+
                     <div class="card-text" th:utext="${@commonUtil.markdown(pagedAnswer.content)}"></div>
                     <div class="d-flex justify-content-end border-bottom">
+
+                        <div class="d-flex align-items-center">
+                            <div style="position: relative; width: 2.5rem; height: 2.5rem;" id="image_container_answer">
+                                <a class="nav-link" href="/member/mypage">
+                                    <img th:if="${pagedAnswer.member.snsImage}!=null"
+                                         th:src="${pagedAnswer.member.snsImage}" alt="에러"
+                                         class="shadow-sm rounded-circle text-center"
+                                         style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                    <img th:if="${pagedAnswer.member.snsImage}==null and ${pagedAnswer.member.image}==null"
+                                         th:src="@{/img/noneuser.png}" alt="에러"
+                                         class="shadow-sm rounded-circle text-center"
+                                         style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                    <img th:if="${pagedAnswer.member.snsImage}==null and ${pagedAnswer.member.image}!=null"
+                                         th:src="@{|/resources/${pagedAnswer.member.image.name}|}" alt="에러"
+                                         class="shadow-sm rounded-circle text-center"
+                                         style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
+                                </a>
+                            </div>
+                        </div>
+
                         <div th:if="${pagedAnswer.modifyDate != null}"
                              class="badge bg-light text-dark p-2 text-start mx-3">
                             <div class="mb-2">수정시일</div>
@@ -158,7 +296,7 @@
                         <div class="badge bg-light text-dark p-2 text-start">
                             <div class="mb-2">
                             <span th:if="${pagedAnswer.member != null}"
-                                  th:text="${pagedAnswer.member.username}"></span>
+                                  th:text="${#strings.substring(pagedAnswer.member.username, 0, 3) + '****'}"></span>
                             </div>
                             <div th:text="${#temporals.format(pagedAnswer.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
                         </div>
@@ -244,7 +382,7 @@
                                         <div class="badge bg-light text-dark p-2 text-start">
                                             <div class="mb-2">
                                             <span th:if="${aco_paged.member != null}"
-                                                  th:text="${aco_paged.member.username}"></span>
+                                                  th:text="${#strings.substring(aco_paged.member.username, 0, 3) + '****'}"></span>
                                             </div>
                                             <div th:text="${#temporals.format(aco_paged.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
                                         </div>
@@ -328,11 +466,12 @@
 
 
 <script layout:fragment="script" type='text/javascript'>
-    var simplemde = new SimpleMDE({element:document.getElementById("answer-content")});
+    var simplemde = new SimpleMDE({element: document.getElementById("answer-content")});
 
     const delete_elements = document.getElementsByClassName("delete");
     Array.from(delete_elements).forEach(function (element) {
         element.addEventListener('click', function () {
+            debugger
             if (confirm("정말로 삭제하시겠습니까?")) {
                 location.href = this.dataset.uri;
             }

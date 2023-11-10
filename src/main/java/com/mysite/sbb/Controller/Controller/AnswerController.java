@@ -1,6 +1,6 @@
 package com.mysite.sbb.Controller.Controller;
 
-import com.mysite.sbb.Controller.Form.AnswerForm;
+import com.mysite.sbb.Model.Form.AnswerForm;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Member;
 import com.mysite.sbb.Model.Entity.Question;
@@ -81,9 +81,11 @@ public class AnswerController {
 
     @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/delete/{id}")
-    public String answerDelete(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+    public String answerDelete(@AuthenticationPrincipal User user,
+                               Principal principal,
+                               @PathVariable("id") Long id) {
         Answer answer = this.answerService.getAnswer(id);
-        if (!answer.getMember().getUsername().equals(user.getUsername())
+        if (!answer.getMember().getUsername().equals(principal.getName())
                 && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }

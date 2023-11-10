@@ -7,7 +7,8 @@
         <form th:action="@{/board/create}" th:object="${questionForm}" method="post">
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
             <div class="mb-3">
-                <select class="form-select" th:field="*{category}">
+                <label for="category" class="form-label fw-bold">카테고리</label>
+                <select class="form-select" name="category" th:field="*{category}">
                     <option th:each="category, loop : ${categoryList}" th:value="${category.id}" th:text="${category.name}">
                     </option>
                 </select>
@@ -20,10 +21,25 @@
                 <label for="content" class="form-label fw-bold">내용</label>
                 <textarea name="content" th:field="*{content}" id="content" class="form-control" rows="15"></textarea>
             </div>
+
+            <label for="hashtag" class="form-label fw-bold">관심태그</label>
+            <input name="hashtag" id="hashtag" th:field="*{hashtag}" class="tagify--outside form-control" placeholder="관심태그를 입력하세요">
+
             <input type="submit" class="btn btn-primary my-2" th:if="${questionForm.subject} != null" value="수정">
             <input type="submit" class="btn btn-primary my-2" th:unless="${questionForm.subject} != null" value="등록">
         </form>
+
+            <script>
+                var input = document.querySelector('input[name=hashtag]')
+                var tagify = new Tagify(input);
+
+                // 태그가 추가되면 이벤트 발생
+                tagify.on('add', function() {
+                    console.log(tagify.value); // 입력된 태그 정보 객체
+                })
+            </script>
     </div>
+
 
 
     <script layout:fragment="script" type='text/javascript'>

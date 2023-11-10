@@ -27,6 +27,13 @@ public class ImageService {
         this.imageRepository.save(image);
     };
 
+    public void upload(Member member)
+    {
+        Image image = new Image();
+        image.setMember(member);
+
+        this.imageRepository.save(image);
+    }
     public Image findImage(Member member)
     {
         return imageRepository.findByMember(member);

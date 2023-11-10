@@ -1,7 +1,6 @@
 package com.mysite.sbb.Controller.Controller;
 
-import com.mysite.sbb.Controller.Form.CommentForm;
-import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
+import com.mysite.sbb.Model.Form.CommentForm;
 import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Comment;
 import com.mysite.sbb.Model.Entity.Member;
@@ -13,7 +12,6 @@ import com.mysite.sbb.Service.QuestionService;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -82,9 +80,11 @@ public class CommentController {
 
     @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/question/delete/{id}")
-    public String QuestionDelete(@AuthenticationPrincipal User user, @PathVariable("id") Long id) {
+    public String QuestionDelete(@AuthenticationPrincipal User user,
+                                 Principal principal,
+                                 @PathVariable("id") Long id) {
         Comment comment = this.commentService.getComment(id);
-        if (!comment.getMember().getUsername().equals(user.getUsername())
+        if (!comment.getMember().getUsername().equals(principal.getName())
                 && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }
@@ -94,9 +94,11 @@ public class CommentController {
 
     @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/answer/delete/{id}")
-    public String answerDelete(@AuthenticationPrincipal User user,@PathVariable("id") Long id) {
+    public String answerDelete(@AuthenticationPrincipal User user,
+                               Principal principal,
+                               @PathVariable("id") Long id) {
         Comment comment = this.commentService.getComment(id);
-        if (!comment.getMember().getUsername().equals(user.getUsername())
+        if (!comment.getMember().getUsername().equals(principal.getName())
                 && !user.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "삭제권한이 없습니다.");
         }

@@ -6,10 +6,10 @@
                 <form th:action="@{/image/upload}" method="post" id="img-form" enctype="multipart/form-data">
                     <div class="my-3  d-flex justify-content-center align-content-center">
                         <div style="position: relative; width: 12rem; height: 12rem;" id = "image_container">
-                            <img id = "none_user_img" th:if="${img}==null" th:src="@{/img/noneuser.png}" onerror="imageUploading();"
+                            <img id = "none_user_img" th:if="${myphoto}==null" th:src="@{/img/noneuser.png}" onerror="imageUploading();"
                                  class="shadow rounded-circle text-center"
                                  style="position: absolute; top: 0; left: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto">
-                            <img id = "user_img" th:unless="${img}==null" th:src="@{|/resources/${img.name}|}" onerror="imageUploading();"
+                            <img id = "user_img" th:unless="${myphoto}==null" th:src="${myphoto}"  onerror="imageUploading();"
                             class="shadow rounded-circle text-center"
                             style="position: absolute; top: 0; left: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto">
                         </div>

@@ -9,13 +9,15 @@
             <div class="collapse navbar-collapse d-flex">
                 <ul class="nav col-10 justify-content-lg-center">
                     <li class="my-2 nav-item">
-                        <a class="nav-link rounded" href="/board/list" th:text="전체게시판"
-                           th:classappend="${nowCategory == null} ? 'active'"></a>
+                        <a class="nav-link rounded category-link" href="javascript:void(0)" th:text="전체게시판"
+                           th:classappend="${category == 0} ? 'active'" data-page="0"></a>
                     </li>
-                    <li class="my-2 nav-item" th:each="category, loop : ${categoryList}">
-                        <a class="nav-link rounded" th:href="@{|/board/list/${category.id}|}"
-                           th:text="${category.name}"
-                           th:classappend="${nowCategory != null && nowCategory.id == category.id} ? 'active'"></a>
+                    <li class="my-2 nav-item" th:each="categoryitem, loop : ${categoryList}">
+                        <a class="nav-link rounded category-link"
+                           href="javascript:void(document.getElementById('category').setAttribute('value',  /*[[loop.index]]*/ + 1))"
+                           th:text="${categoryitem.name}"
+                           th:classappend="${category == categoryitem.id} ? 'active'"
+                           th:data-page="${categoryitem.id}"></a>
                     </li>
                 </ul>
                 <div class="d-lg-flex col-2 justify-content-lg-end">
@@ -48,14 +50,52 @@
 
             <tbody>
             <tr class="text-center" th:each="question, loop : ${paging}">
-                <td th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></td>
-                <td class="text-start">
-                    <a class="nav-link" th:href="@{|/board/detail/${question.id}|}" th:text="${question.subject}"></a>
-                    <span class="text-danger small                                       " th:if="${#lists.size(question.answerList) > 0}"
-                          th:text="${#lists.size(question.answerList)}">
-                                    </span>
+                <td>
+                    <div>
+                        <span th:text="${paging.getTotalElements - (paging.number * paging.size) - loop.index}"></span>
+                    </div>
+                    <div class="pb-1" th:if="${question.chooseAnswer} == null">
+                        <div class="d-flex justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="28"
+                                 height="28"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                 class="text-gray-400">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                            </svg>
+                        </div>
+                    </div>
+                    <div class="pb-1" th:unless="${question.chooseAnswer} == null">
+                        <div class="d-flex justify-content-center">
+                            <svg xmlns="http://www.w3.org/2000/svg"
+                                 width="28"
+                                 height="28"
+                                 fill="none" viewBox="0 0 24 24"
+                                 stroke-width="1.5" stroke="currentColor" aria-hidden="true"
+                                 class="navbar-nav">
+                                <path stroke-linecap="round" stroke-linejoin="round"
+                                      d="M9 12.75L11.25 15 15 9.75M21 12c0 1.268-.63 2.39-1.593 3.068a3.745 3.745 0 01-1.043 3.296 3.745 3.745 0 01-3.296 1.043A3.745 3.745 0 0112 21c-1.268 0-2.39-.63-3.068-1.593a3.746 3.746 0 01-3.296-1.043 3.745 3.745 0 01-1.043-3.296A3.745 3.745 0 013 12c0-1.268.63-2.39 1.593-3.068a3.745 3.745 0 011.043-3.296 3.746 3.746 0 013.296-1.043A3.746 3.746 0 0112 3c1.268 0 2.39.63 3.068 1.593a3.746 3.746 0 013.296 1.043 3.746 3.746 0 011.043 3.296A3.745 3.745 0 0121 12z"></path>
+                            </svg>
+                        </div>
+                    </div>
                 </td>
-                <td><span th:if="${question.member != null}" th:text=" ${#strings.substring(question.member.username, 0, 3) + '****'}"></span></td>
+                <td class="text-start">
+                    <div class="d-flex justify-content-between">
+                        <a class="nav-link" th:href="@{|/board/detail/${question.id}|}" th:text="${question.subject}"></a>
+                        <span class="text-danger small ms-2" th:if="${#lists.size(question.answerList) > 0}"
+                              th:text="@{|(${#lists.size(question.answerList)})|}">
+                                    </span>
+                    </div>
+
+                    <div class="d-flex">
+                        <div class="me-2" th:each="tag, loop : ${question.taglist}">
+                            <a class="tag-link" th:href="@{|/taged/list/${tag.tag.name}|}" th:text="@{|#${tag.tag.name}|}"></a>
+                        </div>
+                    </div>
+                </td>
+                <td><span th:if="${question.member != null}" th:text=" ${question.member.nickName}"></span></td>
                 <td><span th:text="${question.view}"></span></td>
                 <td th:text="${#temporals.format(question.createDate, 'yyyy-MM-dd HH:mm')}"></td>
             </tr>
@@ -87,6 +127,7 @@
         </div>
         <!--페이징처리 끝-->
         <form th:action="@{/board/list}" method="get" id="searchForm">
+            <input  type="hidden" id="category" name="category" th:value="${category}">
             <input type="hidden" id="kw" name="kw" th:value="${kw}">
             <input type="hidden" id="page" name="page" th:value="${paging.number}">
         </form>
@@ -100,13 +141,36 @@
     Array.from(page_elements).forEach(function (element) {
         element.addEventListener('click', function () {
             document.getElementById('page').value = this.dataset.page;
+
+            debugger
+            if (window.location.pathname.substring(0, 7) == "/taged/"){
+                document.getElementById('searchForm').setAttribute("action",window.location.pathname)
+            }
+
             document.getElementById('searchForm').submit();
         });
     });
+
+    const category_elements = document.getElementsByClassName("category-link");
+    Array.from(category_elements).forEach(function (element){
+        element.addEventListener('click', function (){
+            document.getElementById('category').value=this.dataset.page;
+
+            if (window.location.pathname.substring(0, 7) == "/taged/"){
+                document.getElementById('searchForm').setAttribute("action",window.location.pathname)
+            }
+            document.getElementById('searchForm').submit();
+        });
+    });
+
     const btn_search = document.getElementById("btn_search");
     btn_search.addEventListener('click', function () {
         document.getElementById('kw').value = document.getElementById('search_kw').value;
         document.getElementById('page').value = 0;  // 검색버튼을 클릭할 경우 0페이지부터 조회한다.
+
+        if (window.location.pathname.substring(0, 7) == "/taged/"){
+            document.getElementById('searchForm').setAttribute("action",window.location.pathname)
+        }
         document.getElementById('searchForm').submit();
     });
 </script>

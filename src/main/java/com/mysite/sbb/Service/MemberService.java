@@ -1,22 +1,16 @@
 package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Config.CommonUtil;
+import com.mysite.sbb.Model.Form.MemberCreateForm;
 import com.mysite.sbb.Exception.DataNotFoundException;
-import com.mysite.sbb.Model.Entity.Answer;
 import com.mysite.sbb.Model.Entity.Member;
-import com.mysite.sbb.Model.Entity.Question;
 import com.mysite.sbb.Model.Repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.Builder;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.parameters.P;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -29,12 +23,23 @@ public class MemberService {
     private final CommonUtil commonUtil;
     private final FindPasswordService findPasswordService;
 
-    public Member create(String username, String email, String password)
+    public Member create(MemberCreateForm memberCreateForm, boolean snsImage)
     {
         Member member = new Member();
-        member.setUsername(username);
-        member.setEmail(email);
-        member.setPassword(passwordEncoder.encode(password));
+        member.setUsername(memberCreateForm.getUsername());
+        member.setEmail(memberCreateForm.getEmail());
+        member.setPassword(passwordEncoder.encode(memberCreateForm.getPassword()));
+        member.setRealName(memberCreateForm.getRealName());
+        member.setNickName(memberCreateForm.getNickName());
+        member.setProvider(memberCreateForm.getProvider());
+        member.setProviderId(memberCreateForm.getProviderID());
+        member.setScore(0L);
+
+        if(snsImage)
+        {
+            member.setSnsImage(memberCreateForm.getSnsImage());
+        }
+
         this.memberRepository.save(member);
         return member;
     }
@@ -69,5 +74,28 @@ public class MemberService {
         user.setPassword(passwordEncoder.encode(tempPassword));
         memberRepository.save(user);
         findPasswordService.sendSimpleMessage(email, tempPassword);
+    }
+
+    public void snsImageDelet(Member member)
+    {
+        member.setSnsImage(null);
+        this.memberRepository.save(member);
+    }
+
+    public void updateScore(Member member)
+    {
+        member.setScore(member.getScore()+1);
+        this.memberRepository.save(member);
+    }
+
+    public void downScore(Member member)
+    {
+        member.setScore(member.getScore()-1);
+        this.memberRepository.save(member);
+    }
+
+    public List<Member> getTopUser()
+    {
+        return memberRepository.getTopUser();
     }
 }

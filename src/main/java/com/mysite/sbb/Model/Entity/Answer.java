@@ -29,14 +29,14 @@ public class Answer {
 
     private LocalDateTime modifyDate;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Question question;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.LAZY)
     private Member member;
 
-    @ManyToMany
-    Set<Member> likeMembers;
+    @ManyToMany(fetch = FetchType.LAZY)
+    private Set<Member> likeMembers;
 
     @OneToMany(mappedBy = "answer", cascade = CascadeType.REMOVE)
     @OrderBy("createDate desc")

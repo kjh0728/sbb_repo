@@ -20,6 +20,32 @@ public class QuestionService {
 
     private final QuestionRepository questionRepository;
 
+    private final QuestionTagMapService questionTagMapService;
+
+    private final AnswerService answerService;
+
+    private final MemberService memberService;
+
+    public void chooseAnswer(Long question_id, Long answer_id)
+    {
+        Question question = getQuestion(question_id);
+        Answer answer = answerService.getAnswer(answer_id);
+        question.setChooseAnswer(answer);
+        memberService.updateScore(answer.getMember());
+
+        this.questionRepository.save(question);
+    }
+
+    public void chooseDeleteAnswer(Long question_id, Long answer_id)
+    {
+        Question question = getQuestion(question_id);
+        Answer answer = answerService.getAnswer(answer_id);
+        question.setChooseAnswer(null);
+        memberService.downScore(answer.getMember());
+        this.questionRepository.save(question);
+    }
+
+
     public Question getQuestion(Long id) {
         Optional<Question> question = this.questionRepository.findById(id);
 
@@ -33,7 +59,7 @@ public class QuestionService {
         }
     }
 
-    public void create(Category category, String subject, String content, Member member)
+    public void create(Category category, String subject, String content, Member member, List<String> tagList)
     {
         Question question = new Question();
         question.setCategory(category);
@@ -42,7 +68,10 @@ public class QuestionService {
         question.setCreateDate(LocalDateTime.now());
         question.setMember(member);
         question.setView(0);
+
         this.questionRepository.save(question);
+
+        questionTagMapService.create(question, tagList);
     }
 
     public Page<Question> getPage(Long category, int page, String kw)
@@ -56,15 +85,15 @@ public class QuestionService {
         return this.questionRepository.findAll(specification, pageable);
     }
 
-    public Page<Question> getPage(int page, String kw)
+    public Page<Question> getPage(int page, String kw, String tag)
     {
+
         List<Sort.Order> sorts = new ArrayList<>();
         sorts.add(Sort.Order.desc("createDate"));
 
         Pageable pageable = PageRequest.of(page,10, Sort.by(sorts));
 
-        Specification<Question> specification = search(kw, 0L);
-        return this.questionRepository.findAll(specification, pageable);
+        return this.questionRepository.findAllByKeywordAndTag(kw, tag, pageable);
     }
 
     public Page<Question> getPage(String username, int page, String kw)
@@ -92,7 +121,14 @@ public class QuestionService {
 
 
     public void addLike(Question question, Member member) {
-        question.getLikeMembers().add(member);
+        if(question.getLikeMembers().contains(member))
+        {
+            question.getLikeMembers().remove(member);
+        }
+        else
+        {
+            question.getLikeMembers().add(member);
+        }
         this.questionRepository.save(question);
     }
 

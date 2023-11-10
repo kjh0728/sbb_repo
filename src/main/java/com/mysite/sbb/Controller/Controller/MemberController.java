@@ -1,11 +1,14 @@
 package com.mysite.sbb.Controller.Controller;
 
-import com.mysite.sbb.Controller.Form.MemberCreateForm;
-import com.mysite.sbb.Controller.Form.PWModifyForm;
-import com.mysite.sbb.Controller.Form.TempPasswordForm;
+import com.mysite.sbb.Config.OAuth2.OAuth2UserInfo;
+import com.mysite.sbb.Model.Form.MemberCreateForm;
+import com.mysite.sbb.Model.Form.PWModifyForm;
+import com.mysite.sbb.Model.Form.TempPasswordForm;
 import com.mysite.sbb.Exception.DataNotFoundException;
 import com.mysite.sbb.Model.Entity.*;
 import com.mysite.sbb.Service.*;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -38,8 +41,32 @@ public class MemberController {
         return "/member/signup_form";
     }
 
+    @GetMapping("/signup/social")
+    public String signup(MemberCreateForm memberCreateForm, HttpServletRequest request, Model model)
+    {
+        HttpSession session = request.getSession();
+        OAuth2UserInfo socialLogin = (OAuth2UserInfo)session.getAttribute("SOCIAL_LOGIN");
+
+        if(socialLogin != null)
+        {
+            memberCreateForm.setNickName(socialLogin.getName());
+            memberCreateForm.setUsername(socialLogin.getProvider()+"_"+socialLogin.getProviderId());
+            memberCreateForm.setPassword(socialLogin.getProvider()+"_"+socialLogin.getProviderId());
+            memberCreateForm.setRe_password(socialLogin.getProvider()+"_"+socialLogin.getProviderId());
+            memberCreateForm.setRealName(socialLogin.getName());
+            memberCreateForm.setEmail(socialLogin.getEmail());
+            memberCreateForm.setProvider(socialLogin.getProvider());
+            memberCreateForm.setProviderID(socialLogin.getProviderId());
+            memberCreateForm.setSnsImage(socialLogin.getImage());
+        }
+        model.addAttribute("socialLogin", socialLogin);
+        return "/member/social_signup_form";
+    }
+
     @PostMapping("/signup")
-    public String signup(@Valid MemberCreateForm memberCreateForm, BindingResult bindingResult) {
+    public String signup(@Valid MemberCreateForm memberCreateForm,
+                         @RequestParam(value = "profile-picture", defaultValue = "") String profile,
+                         BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             return "/member/signup_form";
         }
@@ -52,9 +79,15 @@ public class MemberController {
 
         try
         {
-            String a =memberCreateForm.getPassword();
-            memberService.create(memberCreateForm.getUsername(),
-                    memberCreateForm.getEmail(), a);
+            if (profile.equals("sns-picture"))
+            {
+                Member member = memberService.create(memberCreateForm, true);
+                imageService.upload(member);
+            }
+            else {
+                memberService.create(memberCreateForm, false);
+            }
+
         }
         catch (DataIntegrityViolationException e) {
             e.printStackTrace();
@@ -107,9 +140,6 @@ public class MemberController {
 
     @GetMapping("/mypage")
     public String mypage(Model model, Principal principal) throws InterruptedException {
-        Member member = memberService.getMember(principal.getName());
-        Image image = imageService.findImage(member);
-        model.addAttribute("img", image);
         return "/member/mypage_form";
     }
 

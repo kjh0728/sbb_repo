@@ -40,6 +40,9 @@ public class Question {
     @OrderBy("createDate desc")
     private List<Answer> answerList;
 
+    @OneToOne(fetch = FetchType.LAZY)
+    private Answer chooseAnswer;
+
     @ManyToMany
     Set<Member> likeMembers;
 
@@ -53,4 +56,7 @@ public class Question {
 
     @Column(columnDefinition = "long default 0", nullable = false)
     private Integer view;
+
+    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    private List<QuestionTagMap> taglist;
 }

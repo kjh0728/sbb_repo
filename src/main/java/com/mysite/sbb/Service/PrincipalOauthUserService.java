@@ -1,24 +1,27 @@
 package com.mysite.sbb.Service;
 
 import com.mysite.sbb.Config.OAuth2.GoogleUserInfo;
+import com.mysite.sbb.Config.OAuth2.KakaoUserInfo;
+import com.mysite.sbb.Config.OAuth2.NaverUserInfo;
 import com.mysite.sbb.Config.OAuth2.OAuth2UserInfo;
-import com.mysite.sbb.Config.UserRole;
+import com.mysite.sbb.Controller.Controller.MemberController;
 import com.mysite.sbb.Model.DTO.PrincipalDetails;
 import com.mysite.sbb.Model.Entity.Member;
 import com.mysite.sbb.Model.Repository.MemberRepository;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import lombok.Builder;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.User;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
-import javax.management.relation.Role;
-import java.time.LocalDateTime;
+import java.util.Map;
 
 @Service
 @Builder
@@ -26,6 +29,7 @@ public class PrincipalOauthUserService extends DefaultOAuth2UserService {
     private PasswordEncoder passwordEncoder;
 
     private MemberRepository userRepository;
+    private MemberController memberController;
 
     //구글로 부터 받은 userRequest 데이터에 대한 후처리되는 함수
     //함수 종료시 @AuthenticationPrincipal 어노테이션이 만들어진다.
@@ -50,6 +54,13 @@ public class PrincipalOauthUserService extends DefaultOAuth2UserService {
         if(userRequest.getClientRegistration().getRegistrationId().equals("google")) {
             oAuth2UserInfo = new GoogleUserInfo(oAuth2User.getAttributes());
         }
+        else if(userRequest.getClientRegistration().getRegistrationId().equals("kakao")) {
+            oAuth2UserInfo = new KakaoUserInfo((Map) oAuth2User.getAttributes().get("kakao_account"),
+                    String.valueOf(oAuth2User.getAttributes().get("id")));
+        }
+        else if(userRequest.getClientRegistration().getRegistrationId().equals("naver")) {
+            oAuth2UserInfo = new NaverUserInfo((Map)oAuth2User.getAttributes().get("response"));
+        }
         else{
             System.out.println("지원하지 않은 로그인 서비스 입니다.");
         }
@@ -63,14 +74,14 @@ public class PrincipalOauthUserService extends DefaultOAuth2UserService {
         Member member = userRepository.findByUsername(username).orElse(null);
         //처음 서비스를 이용한 회원일 경우
         if(member == null) {
-            member = new Member();
-            member.setUsername(username);
-            member.setPassword(password);
-            member.setEmail(email);
-            member.setProvider(provider);
-            member.setProviderId(providerId);
+            HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
+            HttpSession session = request.getSession();
 
-            userRepository.save(member);
+            Member singupmember = new Member();
+            singupmember.setUsername(username);
+
+            session.setAttribute("SOCIAL_LOGIN", oAuth2UserInfo);
+            throw new UsernameNotFoundException("User Not Found");
         }
 
         return new PrincipalDetails(member, oAuth2User.getAttributes());

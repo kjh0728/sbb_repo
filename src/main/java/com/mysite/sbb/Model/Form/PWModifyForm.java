@@ -1,4 +1,4 @@
-package com.mysite.sbb.Controller.Form;
+package com.mysite.sbb.Model.Form;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

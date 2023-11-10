@@ -17,7 +17,7 @@ public class GoogleUserInfo implements OAuth2UserInfo {
 
     @Override
     public String getProvider() {
-        return "google";
+        return "GOOGLE";
     }
 
     @Override
@@ -28,5 +28,11 @@ public class GoogleUserInfo implements OAuth2UserInfo {
     @Override
     public String getName() {
         return String.valueOf(attributes.get("name"));
+    }
+
+    @Override
+    public String getImage()
+    {
+        return String.valueOf(attributes.get("picture"));
     }
 }

@@ -22,7 +22,20 @@ public class GlobalControllerAdvice {
         if(principal != null)
         {
             Member member = memberService.getMember(principal.getName());
-            model.addAttribute("myphoto", member.getImage());
+            if(member.getSnsImage() == null)
+            {
+                if(member.getImage() != null)
+                {
+                    model.addAttribute("myphoto", "/resources/"+member.getImage().getName());
+                }
+                else {
+                    model.addAttribute("myphoto", null);
+                }
+            }
+            else{
+                model.addAttribute("myphoto", member.getSnsImage());
+            }
+
         }
 
     }

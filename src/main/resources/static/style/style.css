@@ -28,14 +28,30 @@ a{
     text-decoration-line: none;
     color: #0090f9;
 }
-.sns-login-btn
+.btn-outline-ras
 {
     border-color: #d6d6d6;
     width: 10rem;
-
 }
 
-.sns-login-btn:hover{
+.btn-sm-noneoutline-ras
+{
+    border-radius: 1rem;
+    width: 1.5rem;
+}
+
+.btn-sm-noneoutline-ras:hover
+{
+    background: #e0edf9;
+}
+
+.btn-large-ras
+{
+    width: 14rem;
+    height: 7rem;
+}
+
+.btn-outline-ras:hover{
     border-color: #646467;
 }
 
@@ -64,17 +80,18 @@ a{
 
 .left-content
 {
-    width: 15%;
+    width: 18%;
 }
 
 .main-content
 {
-    width: 70%;
+    width: 64%;
 }
 
 .fixed {
     position: fixed;
     top: 6rem;
+    height: 100%;
 }
 
 .line {
@@ -107,4 +124,42 @@ a{
 * {
     font-family: 'Noto Sans KR', sans-serif;
     letter-spacing: 0.3px;
+}
+
+.tagify--outside{
+
+    width: 100%;
+}
+
+.tagify--outside .tagify__input{
+    margin: 0;
+    border: 0;
+    order: -1;
+    flex: 100%;
+    margin-bottom: 0.3em;
+    transition: 1s;
+    border-radius: 0.5rem;
+}
+
+.tagify--outside .tagify__input:hover{ border-color:var(--tags-hover-border-color); }
+.tagify--outside.tagify--focus .tagify__input{
+    transition:0s;
+    border-color: var(--tags-focus-border-color);
+}
+
+
+.tag-link
+{
+    color:#1e2125;
+}
+
+.tag-link:hover
+{
+    color:#0090f9;
+}
+
+
+svg.text-gray-400
+{
+    color: rgb(128, 128, 128);
 }

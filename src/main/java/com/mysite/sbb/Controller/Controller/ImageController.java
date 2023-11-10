@@ -35,6 +35,7 @@ public class ImageController {
 
         UserDetails userDetails = (UserDetails) authentication.getPrincipal();
         Member member = memberService.getMember(userDetails.getUsername());
+        memberService.snsImageDelet(member);
         String currName = multipartFile.getOriginalFilename();
         assert currName != null;
         String[] type = multipartFile.getContentType().split("/");

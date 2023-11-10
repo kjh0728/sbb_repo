@@ -1,0 +1,119 @@
+<html layout:decorate="~{layout}">
+<div layout:fragment="content" class="container my-3">
+    <form th:action="@{/member/signup}" th:object="${memberCreateForm}" method="post">
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
+
+
+        <div class="d-flex justify-content-center">
+            <div class="row-cols-auto">
+                <div class="col my-4">
+                    <div class="mb-5 mt-5r text-center">
+                        <h2 class="font-700" th:text="${socialLogin.provider}+' 계정을 이용한 회원가입'">
+                        </h2>
+
+                        <span class="font-400">
+                            RASGULLA 소개멘트 입니다.
+                        </span>
+                    </div>
+                    <div>
+                        <div class="font-400">
+                            <span>프로필 이미지 선택</span>
+                        </div>
+
+                        <div class="my-2 d-flex">
+                            <input type="hidden" th:field="*{snsImage}">
+                            <input type="radio" class="btn-check" name="profile-picture" id="sns-picture"
+                                    value="sns-picture" autocomplete="off" checked >
+                            <label for="sns-picture" class="btn btn-outline-ras btn-large-ras me-2 col d-flex justify-content-center align-items-center" >
+                                <div>
+                                    <div class="d-flex justify-content-center">
+                                        <div style="position: relative; width: 3rem; height: 3rem;">
+                                            <img th:src="${socialLogin.image}" th:alt="${socialLogin.provider} + ' 프로필 사진'"
+                                                 class="shadow rounded-circle text-center"
+                                                 style="position: absolute; top: 0; left: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="font-400" th:text="${socialLogin.provider}"></span>
+                                    </div>
+                                </div>
+                            </label>
+
+                            <input type="radio" class="btn-check" name="profile-picture" id="ras-picture"
+                                   value="ras-picture" autocomplete="off" >
+                            <label for="ras-picture" class="btn btn-outline-ras btn-large-ras me-2 col d-flex justify-content-center align-items-center" >
+                                <div>
+                                    <div class="d-flex justify-content-center">
+                                        <div style="position: relative; width: 3rem; height: 3rem;">
+                                            <img th:src="@{/img/noneuser.png}" th:alt="${socialLogin.provider} + ' 프로필 사진'"
+                                                 class="shadow rounded-circle text-center"
+                                                 style="position: absolute; top: 0; left: 0; transform: translate(50,50); width: 100%; height: 100%; object-fit: cover; margin: auto">
+                                        </div>
+                                    </div>
+                                    <div>
+                                        <span class="font-400">기본 사진</span>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="line my-5">
+                        회원가입에 필요한 기본 정보를 입력해 주세요.
+                    </div>
+
+                    <div class="mb-3 visually-hidden">
+                        <label for="username" class="form-label">아이디</label>
+                        <input id="username" type="text" th:field="*{username}">
+                    </div>
+                    <div class="mb-3 visually-hidden">
+                        <label for="password" class="form-label">비밀번호</label>
+                        <input id="password" type="text" th:field="*{password}">
+                    </div>
+                    <div class="mb-3 visually-hidden">
+                        <label for="re_password" class="form-label">비밀번호 확인</label>
+                        <input id="re_password" type="text" th:field="*{re_password}">
+                    </div>
+                    <div class="mb-3 visually-hidden">
+                        <label for="email" class="form-label">이메일</label>
+                        <input id="email" type="email" th:field="*{email}">
+                    </div>
+
+                    <div class="mb-3 visually-hidden">
+                        <label for="realName" class="form-label">실명</label>
+                        <input id="realName" type="text" th:field="*{realName}">
+                    </div>
+
+                    <div class="mb-3 visually-hidden">
+                        <label for="provider" class="form-label">실명</label>
+                        <input id="provider" type="text" th:field="*{provider}">
+                    </div>
+
+                    <div class="mb-3 visually-hidden">
+                        <label for="providerID" class="form-label">실명</label>
+                        <input id="providerID" type="text" th:field="*{providerID}">
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="nickName" class="form-label" >닉네임</label>
+                        <input id="nickName" name="nickName" type="text" th:field="*{nickName}"
+                               class="form-control" placeholder="예시)동에번쩍서에번쩍"
+                               required>
+                    </div>
+
+                </div>
+
+                <button type="submit" class="btn btn-primary form-control">회원가입</button>
+
+                <div class="my-3 d-flex justify-content-center">
+                    <div>
+                        <span>이미 회원이신가요?</span>
+                        <a th:href="@{/member/login}">로그인</a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </form>
+</div>
+</html>
