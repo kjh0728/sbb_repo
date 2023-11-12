@@ -19,4 +19,10 @@ public class AppConfig {
     {
         return System.getProperty("user.dir") + "\\src\\main\\resources\\static\\files\\";
     }
+
+    @Bean
+    static String getMyImgDirPath()
+    {
+        return System.getProperty("user.dir") + "\\src\\main\\resources\\static\\img\\";
+    }
 }

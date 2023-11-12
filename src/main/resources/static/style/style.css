@@ -80,18 +80,23 @@ a{
 
 .left-content
 {
-    width: 18%;
+    width: 16%;
 }
 
 .main-content
 {
-    width: 64%;
+    width: 70%;
 }
 
 .fixed {
     position: fixed;
     top: 6rem;
     height: 100%;
+}
+
+.fixed-side-menu
+{
+    width: 10rem;
 }
 
 .line {
@@ -162,4 +167,9 @@ a{
 svg.text-gray-400
 {
     color: rgb(128, 128, 128);
+}
+
+.btn-primary:disabled{
+    background: rgba(0,142,255,0.42);
+    border-color: rgba(0,142,255,0.1);
 }

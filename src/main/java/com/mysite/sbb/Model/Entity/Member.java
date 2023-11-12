@@ -31,7 +31,7 @@ public class Member{
     @Column(length = 50)
     private String nickName;
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private Image image;
 
     private String provider;
@@ -39,6 +39,6 @@ public class Member{
 
     private String snsImage;
 
-    @Column(columnDefinition = "default 0", nullable = false)
+    @Column(nullable = false)
     private Long score;
 }

@@ -1,6 +1,7 @@
 <div th:fragment="QandALeftContentFragment" class="fixed">
-    <div class="d-flex flex-column">
-        <div class="btn mt-5 border border-1 rounded-4">
+
+    <div class="d-flex flex-lg-column">
+        <div class="btn mt-5 border border-1 rounded-4 fixed-side-menu">
             <div class="border-bottom p-2 text-center">
                 <span class="font-700">#Hot Tag</span>
             </div>
@@ -17,7 +18,7 @@
             </ul>
         </div>
 
-        <div class="btn mt-3 border border-1 rounded-4">
+        <div class="btn mt-3 border border-1 rounded-4 fixed-side-menu">
             <div class="border-bottom p-2 text-center">
                 <span class="font-700">Top User</span>
             </div>
@@ -27,7 +28,7 @@
                     <div class="d-flex">
                         <div class="d-flex align-items-center me-1">
                             <div style="position: relative; width: 1.2rem; height: 1.2rem;" id="image_container_question"
-                            class="mt-1">
+                                 class="mt-1">
                                 <img th:if="${user.snsImage}!=null" th:src="${user.snsImage}"
                                      alt="에러"
                                      class="shadow-sm rounded-circle text-center"
@@ -37,7 +38,7 @@
                                      class="shadow-sm rounded-circle text-center"
                                      style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
                                 <img th:if="${user.snsImage}==null and ${user.image}!=null"
-                                     th:src="@{|/resources/${question.member.image.name}|}" alt="에러"
+                                     th:src="@{|/resources/${user.image.name}|}" alt="에러"
                                      class="shadow-sm rounded-circle text-center"
                                      style="position: absolute; top: 0; left: 0; transform: translate(50,50); height: 100%; width:100%; object-fit: cover; margin: auto">
                             </div>
@@ -52,6 +53,8 @@
                     </div>
                 </li>
             </ul>
+
         </div>
     </div>
+
 </div>

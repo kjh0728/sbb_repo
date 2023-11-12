@@ -7,7 +7,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 public class CustomWebMvcConfig implements WebMvcConfigurer {
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
+
+        String a = AppConfig.getGenFileDirPath();
+        String b = "a";
         registry.addResourceHandler("/resources/**","/myimg/**")
-                .addResourceLocations("File:///D:/2023 국비 김주현/웹개발/study/sbb/src/main/resources/static/files/","File:///D:/2023 국비 김주현/웹개발/study/sbb/src/main/resources/static/img/");
+                .addResourceLocations("File:///"+AppConfig.getGenFileDirPath(),"File:///" + AppConfig.getMyImgDirPath());
     }
 }

@@ -1,0 +1,43 @@
+<div th:fragment="UserAccountContentFragment">
+
+    <div class="mt-5 ms-5">
+        <form th:action="@{/member/update}" method="get" id="member-update-form"
+              enctype="multipart/form-data" th:object="${myPageForm}">
+            <div class="border-bottom pd-2 fw-bold text-start">
+                <h5 class="font-700">계정관리</h5>
+            </div>
+
+            <div class="border-bottom">
+
+                    <div class="mt-5 flex-fill">
+                        <a href="/member/pw_modify" class="btn btn-primary mx-3 w-100">비밀번호 변경</a>
+                    </div>
+
+                    <div class="mt-5 flex-fill">
+                        <a href="/incomplete" class="delete btn btn-primary mx-3 w-100"
+                           th:data-uri="@{/member/delete}">회원 탈퇴</a>
+                    </div>
+
+                    <div class="my-5 flex-fill">
+                        <a href="/incomplete" class="btn btn-primary mx-3 w-100">SNS 로그인 계정 관리</a>
+                    </div>
+
+            </div>
+
+        </form>
+    </div>
+
+    <script layout:fragment="script" type='text/javascript'>
+
+        const delete_elements = document.getElementsByClassName("delete");
+        Array.from(delete_elements).forEach(function (element) {
+            element.addEventListener('click', function () {
+                debugger
+                if (confirm("회원을 탈퇴하면 작성한 모든 게시물이 사라지며 복구할 수 없습니다.\n" +
+                    "정말로 탈퇴하시겠습니까?")) {
+                    location.href = this.dataset.uri;
+                }
+            });
+        });
+    </script>
+</div>

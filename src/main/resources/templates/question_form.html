@@ -8,7 +8,7 @@
             <div th:replace="~{form_errors :: formErrorsFragment}"></div>
             <div class="mb-3">
                 <label for="category" class="form-label fw-bold">카테고리</label>
-                <select class="form-select" name="category" th:field="*{category}">
+                <select class="form-select" id="category" name="category" th:field="*{category}">
                     <option th:each="category, loop : ${categoryList}" th:value="${category.id}" th:text="${category.name}">
                     </option>
                 </select>

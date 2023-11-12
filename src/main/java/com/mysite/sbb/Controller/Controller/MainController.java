@@ -11,4 +11,10 @@ public class MainController {
     {
         return "redirect:/board/list";
     }
+
+    @GetMapping("/incomplete")
+    public String incomplete()
+    {
+        return "incomplete_form";
+    }
 }

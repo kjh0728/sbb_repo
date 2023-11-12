@@ -2,6 +2,7 @@ package com.mysite.sbb.Controller.Controller;
 
 import com.mysite.sbb.Config.OAuth2.OAuth2UserInfo;
 import com.mysite.sbb.Model.Form.MemberCreateForm;
+import com.mysite.sbb.Model.Form.MyPageForm;
 import com.mysite.sbb.Model.Form.PWModifyForm;
 import com.mysite.sbb.Model.Form.TempPasswordForm;
 import com.mysite.sbb.Exception.DataNotFoundException;
@@ -13,12 +14,17 @@ import jakarta.validation.Valid;
 import lombok.Builder;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.security.Principal;
 import java.util.List;
@@ -37,13 +43,21 @@ public class MemberController {
 
 
     @GetMapping("/signup")
-    public String signup(MemberCreateForm memberCreateForm) {
+    public String signup(MemberCreateForm memberCreateForm, Model model) {
+
+        model.addAttribute("memberCreateForm", memberCreateForm);
         return "/member/signup_form";
     }
 
     @GetMapping("/signup/social")
-    public String signup(MemberCreateForm memberCreateForm, HttpServletRequest request, Model model)
+    public String signup(@Valid MemberCreateForm memberCreateForm,
+                         BindingResult bindingResult,
+                         HttpServletRequest request, Model model)
     {
+        if (bindingResult.hasErrors()) {
+            return "/member/social_signup_form";
+        }
+
         HttpSession session = request.getSession();
         OAuth2UserInfo socialLogin = (OAuth2UserInfo)session.getAttribute("SOCIAL_LOGIN");
 
@@ -139,7 +153,17 @@ public class MemberController {
     }
 
     @GetMapping("/mypage")
-    public String mypage(Model model, Principal principal) throws InterruptedException {
+    public String mypage(Model model, Principal principal,
+                         MyPageForm myPageForm,
+                         @RequestParam(value = "menu", defaultValue = "0")int menu) throws InterruptedException {
+
+        Member member = memberService.getMember(principal.getName());
+        myPageForm.setRealName(member.getRealName());
+        myPageForm.setNickName(member.getNickName());
+        myPageForm.setEmail(member.getEmail());
+
+        model.addAttribute("myPageForm", myPageForm);
+        model.addAttribute("menu", menu);
         return "/member/mypage_form";
     }
 
@@ -206,4 +230,10 @@ public class MemberController {
         return "answer_list";
     }
 
+    @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
+    @GetMapping("/delete")
+    public String delete(Principal principal) {
+        this.memberService.delete(principal.getName());
+        return "redirect:/";
+    }
 }

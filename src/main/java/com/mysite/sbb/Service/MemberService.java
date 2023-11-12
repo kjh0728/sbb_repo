@@ -94,8 +94,22 @@ public class MemberService {
         this.memberRepository.save(member);
     }
 
+    public void updateUser(String userName, String realName, String nickName)
+    {
+        Member member = getMember(userName);
+        member.setRealName(realName);
+        member.setNickName(nickName);
+        memberRepository.save(member);
+    }
     public List<Member> getTopUser()
     {
         return memberRepository.getTopUser();
+    }
+
+    public void delete(String username)
+    {
+        Member member = getMember(username);
+
+        memberRepository.delete(member);
     }
 }

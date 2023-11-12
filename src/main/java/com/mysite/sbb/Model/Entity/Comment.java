@@ -26,12 +26,12 @@ public class Comment {
     @CreatedDate
     private LocalDateTime createDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Answer answer;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Question question;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Member member;
 }

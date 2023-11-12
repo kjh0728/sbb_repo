@@ -46,7 +46,7 @@
             </div>
             <!-- 질문 추천 -->
             <div class="mt-3">
-                <a href="javascript:void(0);" class="recommend btn btn-outline-secondary"
+                <a href="javascript:void(0);" class="like btn btn-outline-secondary"
                    th:data-uri="@{|/board/like/${question.id}|}">
                     추천
                     <span class="badge rounded-pill bg-danger bg-opacity-75"
@@ -303,7 +303,7 @@
                     </div>
                     <div class="mt-3">
                         <!-- 질문 답변 추천 -->
-                        <a href="javascript:void(0);" class="recommend btn btn-sm btn-outline-secondary"
+                        <a href="javascript:void(0);" class="like btn btn-sm btn-outline-secondary"
                            th:data-uri="@{|/answer/like/${pagedAnswer.id}|}">
                             추천
                             <span class="badge rounded-pill bg-danger bg-opacity-75"
@@ -478,9 +478,10 @@
         });
     });
 
-    const recommend_elements = document.getElementsByClassName("recommend");
-    Array.from(recommend_elements).forEach(function (element) {
+    const like_elements = document.getElementsByClassName("like");
+    Array.from(like_elements).forEach(function (element) {
         element.addEventListener('click', function () {
+            debugger
             if (confirm("정말로 추천하시겠습니까?")) {
                 location.href = this.dataset.uri;
             }

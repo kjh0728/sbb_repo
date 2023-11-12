@@ -33,7 +33,7 @@ public class Question {
 
     private LocalDateTime modifyDate;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     private Member member;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
@@ -43,7 +43,7 @@ public class Question {
     @OneToOne(fetch = FetchType.LAZY)
     private Answer chooseAnswer;
 
-    @ManyToMany
+    @ManyToMany(cascade = CascadeType.ALL)
     Set<Member> likeMembers;
 
     @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)

@@ -1,8 +1,8 @@
 <html layout:decorate="~{layout}">
 <div layout:fragment="content" class="container my-3">
     <form th:action="@{/member/signup}" th:object="${memberCreateForm}" method="post">
-        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
 
+        <div th:replace="~{form_errors :: formErrorsFragment}"></div>
 
         <div class="d-flex justify-content-center">
             <div class="row-cols-auto">
@@ -83,11 +83,19 @@
                     </div>
                     <div class="mb-3">
                         <label for="password" class="form-label">비밀번호</label>
-                        <input id="password" type="password" th:field="*{password}" class="form-control" placeholder="8자 이상(영어, 숫자, 특수문자 필수)">
+                        <input id="password" type="password" th:field="*{password}" class="form-control"
+                               placeholder="8자 이상(영어, 숫자, 특수문자 필수)" oninput="validatePassword()">
+                        <div id="password_result" style="height: 1rem">
+
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="re_password" class="form-label">비밀번호 확인</label>
-                        <input id="re_password" type="password" th:field="*{re_password}" class="form-control" placeholder="비밀번호를 다시 한번 입력해 주세요">
+                        <input id="re_password" type="password" th:field="*{re_password}" class="form-control"
+                               placeholder="비밀번호를 다시 한번 입력해 주세요" oninput="validatePassword()">
+                        <div id="re_password_result" style="height: 1rem">
+
+                        </div>
                     </div>
                     <div class="mb-3">
                         <label for="email" class="form-label">이메일</label>
@@ -119,4 +127,31 @@
         </div>
     </form>
 </div>
+
+<script layout:fragment="script" type='text/javascript'>
+    function validatePassword() {
+        debugger;
+        var newPassword = document.getElementById('password').value;
+        var confirmPassword = document.getElementById('re_password').value;
+        var resDiv = document.getElementById('password_result');
+        var re_resDiv = document.getElementById('re_password_result');
+
+        var passwordRegex = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^&*?_]).{8,16}$/;
+
+        if (passwordRegex.test(newPassword)) {
+            resDiv.innerHTML = '사용가능한 비밀번호입니다.';
+            resDiv.style.color = 'green';
+            if (newPassword === confirmPassword) {
+                re_resDiv.innerHTML = '비밀번호가 일치하며 유효합니다.';
+                re_resDiv.style.color = 'green';
+            }else{
+                re_resDiv.innerHTML = '비밀번호가 일치하지 않습니다.';
+                re_resDiv.style.color = 'red';
+            }
+        }else{
+            resDiv.innerHTML = '8자 이상, 영문자, 숫자 및 특수 문자를 포함해야 합니다.';
+            resDiv.style.color = 'red';
+        }
+    }
+</script>
 </html>
