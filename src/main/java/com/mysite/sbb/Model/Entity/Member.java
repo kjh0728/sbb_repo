@@ -31,7 +31,7 @@ public class Member{
     @Column(length = 50)
     private String nickName;
 
-    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(mappedBy = "member", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Image image;
 
     private String provider;

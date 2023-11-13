@@ -167,14 +167,14 @@
     <h5 class="border-bottom mt-5 py-2" th:text="|${#lists.size(answerCommentDTOList)}개의 답변이 있습니다.|"></h5>
     <!-- 답변 반복 시작-->
     <div>
-        <form th:action="@{|/board/detail/${question.id}|}" method="post" id="answer-main-form">
             <div class="card my-3 " th:each="pagedAnswer, loop : ${pageAnswer}">
 
                 <a th:id="|answer_${pagedAnswer.id}|"></a>
                 <div class="card-body">
                     <div class="card-header mb-3 d-flex justify-content-end p-0" sec:authorize="isAuthenticated()"
-                         th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() == pagedAnswer.member.username}">
-                        <div class="pb-1" th:if="${question.chooseAnswer.id != pagedAnswer.id}">
+                         th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() == question.member.username}">
+                        <div class="pb-1"
+                             th:if="${question.chooseAnswer==null or question.chooseAnswer.id != pagedAnswer.id}">
                             <a th:href="@{|/board/choose/${question.id}/${pagedAnswer.id}|}"
                                class="btn-sm-noneoutline-ras d-flex justify-content-center">
                                 <div>
@@ -190,7 +190,8 @@
                                 </div>
                             </a>
                         </div>
-                        <div class="pb-1" th:unless="${question.chooseAnswer.id != pagedAnswer.id}">
+                        <div class="pb-1"
+                             th:if="${question.chooseAnswer!=null and question.chooseAnswer.id == pagedAnswer.id}">
                             <a th:href="@{|/board/choose/delete/${question.id}/${pagedAnswer.id}|}"
                                class="btn-sm-noneoutline-ras d-flex justify-content-center">
                                 <div>
@@ -208,8 +209,9 @@
                     </div>
 
                     <div class="card-header mb-3 d-flex justify-content-end p-0" sec:authorize="isAuthenticated()"
-                         th:if="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() != pagedAnswer.member.username}">
-                        <div class="pb-1" th:if="${question.chooseAnswer.id != pagedAnswer.id}">
+                         th:unless="${pagedAnswer.member != null and #authentication.getPrincipal().getUsername() == question.member.username}">
+                        <div class="pb-1"
+                             th:if="${question.chooseAnswer==null or question.chooseAnswer.id != pagedAnswer.id}">
                             <div class="d-flex justify-content-center">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="28"
@@ -222,7 +224,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="pb-1" th:unless="${question.chooseAnswer.id != pagedAnswer.id}">
+                        <div class="pb-1"
+                             th:if="${question.chooseAnswer!=null and question.chooseAnswer.id == pagedAnswer.id}">
                             <div class="d-flex justify-content-center">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="28"
@@ -237,7 +240,8 @@
                         </div>
                     </div>
                     <div class="card-header mb-3 d-flex justify-content-end p-0" sec:authorize="isAnonymous()">
-                        <div class="pb-1" th:if="${question.chooseAnswer.id != pagedAnswer.id}">
+                        <div class="pb-1"
+                             th:if="${question.chooseAnswer==null or question.chooseAnswer.id != pagedAnswer.id}">
                             <div class="d-flex justify-content-center">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="28"
@@ -250,7 +254,8 @@
                                 </svg>
                             </div>
                         </div>
-                        <div class="pb-1" th:unless="${question.chooseAnswer.id != pagedAnswer.id}">
+                        <div class="pb-1"
+                             th:if="${question.chooseAnswer!=null and question.chooseAnswer.id == pagedAnswer.id}">
                             <div class="d-flex justify-content-center">
                                 <svg xmlns="http://www.w3.org/2000/svg"
                                      width="28"
@@ -339,89 +344,92 @@
                            th:text="삭제"></a>
 
                         <!-- 답변 대댓글 -->
-                        <div th:id="'commentAnswer' + ${pagedAnswer.id}"
-                             th:classappend="${answerCommentDTOList.get(loop.index).open} ? 'show'"
-                             class="accordion-collapse collapse">
-                            <h5 class="border-bottom my-3 py-2"
-                                th:text="|${#lists.size(pagedAnswer.commentList)}개의 답변이 있습니다.|"></h5>
+                        <form th:action="@{|/comment/answer/create/${question.id}/${pagedAnswer.id}|}"
+                              th:object="${commentForm}"
+                              th:id="@{|createCommentAnswer_${pagedAnswer.id}|}"
+                              method="post" class="my-3">
+                            <div th:id="'commentAnswer' + ${pagedAnswer.id}"
+                                 class="accordion-collapse collapse">
+                                <h5 class="border-bottom my-3 py-2"
+                                    th:text="|${#lists.size(pagedAnswer.commentList)}개의 댓글이 있습니다.|"></h5>
 
-                            <form th:action="@{|/comment/answer/create/${question.id}/${pagedAnswer.id}|}"
-                                  th:object="${answerForm}"
-                                  id="createAnswer"
-                                  method="post" class="my-3">
+
                                 <div th:replace="form_errors :: formErrorsFragment"></div>
                                 <textarea sec:authorize="isAnonymous()" disabled th:field="*{content}"
                                           class="form-control"
+                                          th:form="@{|createCommentAnswer_${pagedAnswer.id}|}"
                                           rows="3"></textarea>
                                 <textarea sec:authorize="isAuthenticated()" th:field="*{content}" class="form-control"
+                                          th:form="@{|createCommentAnswer_${pagedAnswer.id}|}"
                                           rows="3"></textarea>
-                                <input type="submit" value="댓글등록" form="createAnswer" class="btn btn-primary my-2">
-                            </form>
+                                <input type="submit" value="댓글등록" th:form="|createCommentAnswer_${pagedAnswer.id}|"
+                                       class="btn btn-primary my-2">
 
-                            <!-- 답변 대댓글 반복 시작-->
 
-                            <div>
-                                <div class="card my-3"
-                                     th:each="aco_paged, loop : ${answerCommentDTOList.get(loop.index).comment}">
+                                <!-- 답변 대댓글 반복 시작-->
 
-                                    <div class="d-flex justify-content-end">
-                                        <div class="m-1">
-                                            <a href="javascript:void(0);"
-                                               th:data-uri="@{|/comment/question/delete/${aco_paged.id}|}"
-                                               class="delete btn btn-sm text-danger"
-                                               sec:authorize="isAuthenticated()"
-                                               th:if="${aco_paged.member != null and #authentication.getPrincipal().getUsername() == aco_paged.member.username}"
-                                               th:text="X"></a>
+                                <div>
+                                    <div class="card my-3"
+                                         th:each="aco_paged, loop : ${answerCommentDTOList.get(loop.index).comment}">
+
+                                        <div class="d-flex justify-content-end">
+                                            <div class="m-1">
+                                                <a href="javascript:void(0);"
+                                                   th:data-uri="@{|/comment/answer/delete/${aco_paged.id}|}"
+                                                   class="delete btn btn-sm text-danger"
+                                                   sec:authorize="isAuthenticated()"
+                                                   th:if="${aco_paged.member != null and #authentication.getPrincipal().getUsername() == aco_paged.member.username}"
+                                                   th:text="X"></a>
+                                            </div>
                                         </div>
-                                    </div>
 
 
-                                    <div class="m-3" th:utext="${@commonUtil.markdown(aco_paged.content)}">
-                                    </div>
-                                    <div class="m-2 d-flex justify-content-end">
-                                        <div class="badge bg-light text-dark p-2 text-start">
-                                            <div class="mb-2">
+                                        <div class="m-3" th:utext="${@commonUtil.markdown(aco_paged.content)}">
+                                        </div>
+                                        <div class="m-2 d-flex justify-content-end">
+                                            <div class="badge bg-light text-dark p-2 text-start">
+                                                <div class="mb-2">
                                             <span th:if="${aco_paged.member != null}"
                                                   th:text="${#strings.substring(aco_paged.member.username, 0, 3) + '****'}"></span>
+                                                </div>
+                                                <div th:text="${#temporals.format(aco_paged.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
                                             </div>
-                                            <div th:text="${#temporals.format(aco_paged.createDate, 'yyyy-MM-dd HH:mm:ss')}"></div>
+                                        </div>
+
+                                    </div>
+                                </div>
+
+                                <!-- 답변 대댓글 페이징 끝 -->
+
+                                <div th:if="${!answerCommentDTOList.get(loop.index).comment.isEmpty()}">
+                                    <div class="pagination justify-content-center">
+                                        <div th:each="pageACO: ${#numbers.sequence(0, answerCommentDTOList.get(loop.index).comment.totalPages-1)}"
+                                             th:if="${pageACO >= answerCommentDTOList.get(loop.index).comment.number-5 and page <= answerCommentDTOList.get(loop.index).comment.number+5}"
+
+                                             class="page-item">
+
+                                            <input type="hidden"
+                                                   th:name="'answerCommentDTOList['+${loop.index}+'].open'"
+                                                   th:value="${true}">
+                                            <label>
+                                                <button th:classappend="${pageACO == answerCommentDTOList.get(loop.index).pageNum} ? 'active'"
+                                                        class="page-link"
+                                                        type="submit"
+                                                        th:name="'answerCommentDTOList['+${loop.index}+'].pageNum'"
+                                                        th:value="${pageACO}"
+                                                        th:text="${pageACO}+1"
+                                                        form="answer-main-form">
+                                                </button>
+                                            </label>
+
                                         </div>
                                     </div>
-
                                 </div>
                             </div>
-
-                            <!-- 답변 대댓글 페이징 끝 -->
-
-                            <div th:if="${!answerCommentDTOList.get(loop.index).comment.isEmpty()}">
-                                <div class="pagination justify-content-center">
-                                    <div th:each="pageACO: ${#numbers.sequence(0, answerCommentDTOList.get(loop.index).comment.totalPages-1)}"
-                                         th:if="${pageACO >= answerCommentDTOList.get(loop.index).comment.number-5 and page <= answerCommentDTOList.get(loop.index).comment.number+5}"
-
-                                         class="page-item">
-
-                                        <input type="hidden"
-                                               th:name="'answerCommentDTOList['+${loop.index}+'].open'"
-                                               th:value="${true}">
-                                        <label>
-                                            <button th:classappend="${pageACO == answerCommentDTOList.get(loop.index).pageNum} ? 'active'"
-                                                    class="page-link"
-                                                    type="submit"
-                                                    th:name="'answerCommentDTOList['+${loop.index}+'].pageNum'"
-                                                    th:value="${pageACO}"
-                                                    th:text="${pageACO}+1"
-                                                    form="answer-main-form">
-                                            </button>
-                                        </label>
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
-        </form>
     </div>
 
 

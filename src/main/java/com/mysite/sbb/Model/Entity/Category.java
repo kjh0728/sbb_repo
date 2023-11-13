@@ -18,7 +18,7 @@ public class Category {
     @Column(length = 50)
     private String name;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     @OrderBy("createDate desc")
     private List<Question> questionList;
 }

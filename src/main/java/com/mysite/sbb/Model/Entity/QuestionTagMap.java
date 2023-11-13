@@ -14,9 +14,9 @@ public class QuestionTagMap {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     Long id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Question question;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Tag tag;
 }

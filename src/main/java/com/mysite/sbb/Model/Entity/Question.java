@@ -33,20 +33,20 @@ public class Question {
 
     private LocalDateTime modifyDate;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     private Member member;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @OrderBy("createDate desc")
     private List<Answer> answerList;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(cascade = CascadeType.ALL)
     private Answer chooseAnswer;
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(cascade = CascadeType.REMOVE)
     Set<Member> likeMembers;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     @OrderBy("createDate desc")
     @Where(clause = "answer_id is null")
     private List<Comment> commentList;
@@ -57,6 +57,6 @@ public class Question {
     @Column(columnDefinition = "long default 0", nullable = false)
     private Integer view;
 
-    @OneToMany(mappedBy = "question", cascade = CascadeType.REMOVE)
+    @OneToMany(mappedBy = "question", cascade = CascadeType.ALL)
     private List<QuestionTagMap> taglist;
 }

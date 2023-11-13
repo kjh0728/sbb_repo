@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class MemberCreateForm {
-    @Size(min=4, max=15, message = "아이디는 4~15자 이내로 입력해 주세요.")
+    @Size(min=4, message = "아이디는 4자 이상 입력해 주세요.")
     @NotEmpty(message = "아이디는 필수항목입니다.")
     private String username;
 

@@ -18,6 +18,6 @@ public class Image {
 
     private String url;
 
-    @OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.REMOVE)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Member member;
 }

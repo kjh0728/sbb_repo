@@ -50,14 +50,9 @@ public class MemberController {
     }
 
     @GetMapping("/signup/social")
-    public String signup(@Valid MemberCreateForm memberCreateForm,
-                         BindingResult bindingResult,
+    public String signup(MemberCreateForm memberCreateForm,
                          HttpServletRequest request, Model model)
     {
-        if (bindingResult.hasErrors()) {
-            return "/member/social_signup_form";
-        }
-
         HttpSession session = request.getSession();
         OAuth2UserInfo socialLogin = (OAuth2UserInfo)session.getAttribute("SOCIAL_LOGIN");
 
@@ -233,7 +228,8 @@ public class MemberController {
     @PreAuthorize("isAuthenticated() or hasRole('ROLE_ADMIN')")
     @GetMapping("/delete")
     public String delete(Principal principal) {
+
         this.memberService.delete(principal.getName());
-        return "redirect:/";
+        return "redirect:/member/logout";
     }
 }

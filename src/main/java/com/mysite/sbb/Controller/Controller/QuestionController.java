@@ -1,6 +1,7 @@
 package com.mysite.sbb.Controller.Controller;
 
 import com.mysite.sbb.Model.Form.AnswerForm;
+import com.mysite.sbb.Model.Form.CommentForm;
 import com.mysite.sbb.Model.Form.QuestionForm;
 import com.mysite.sbb.Model.DTO.AnswerCommentDTO;
 import com.mysite.sbb.Model.DTO.AnswerCommentListDTO;
@@ -74,7 +75,7 @@ public class QuestionController {
                          HttpServletRequest request,
                          HttpServletResponse response,
                          Principal principal,
-                         AnswerForm answerForm)
+                         AnswerForm answerForm, CommentForm commentForm)
     {
         Question question = this.questionService.getQuestion(id);
 
