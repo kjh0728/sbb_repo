@@ -3,6 +3,7 @@ package com.mysite.sbb.Model.Form;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.ReadOnlyProperty;
 
 @Getter
 @Setter
@@ -14,6 +15,6 @@ public class MyPageForm {
     @NotEmpty(message = "닉네임은 필수항목입니다.")
     private String nickName;
 
-    @NotEmpty(message = "email은 필수항목입니다.")
+    @ReadOnlyProperty
     private String email;
 }

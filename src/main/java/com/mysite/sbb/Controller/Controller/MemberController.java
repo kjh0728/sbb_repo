@@ -232,4 +232,17 @@ public class MemberController {
         this.memberService.delete(principal.getName());
         return "redirect:/member/logout";
     }
+
+    @GetMapping("/update")
+    public String update(@Valid MyPageForm myPageForm, BindingResult bindingResult, Principal principal)
+    {
+
+        if(bindingResult.hasErrors())
+        {
+            return "redirect:/member/mypage";
+        }
+
+        memberService.updateUser(principal.getName(), myPageForm.getRealName(), myPageForm.getNickName());
+        return "redirect:/member/mypage";
+    }
 }

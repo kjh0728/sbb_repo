@@ -101,6 +101,8 @@ public class MemberService {
         member.setNickName(nickName);
         memberRepository.save(member);
     }
+
+
     public List<Member> getTopUser()
     {
         return memberRepository.getTopUser();
